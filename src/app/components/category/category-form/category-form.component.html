@@ -1,0 +1,22 @@
+<form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="category-form">
+  <div class="form-group">
+    <label for="name">Category Name</label>
+    <input id="name" formControlName="name" type="text" />
+  </div>
+
+  <div class="form-group">
+    <label for="level">Level</label>
+    <select id="level" formControlName="level">
+      <option *ngFor="let level of levels" [value]="level">{{ level }}</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="parentId">Parent Category ID (optional)</label>
+    <input id="parentId" formControlName="parentId" type="text" />
+  </div>
+
+  <button type="submit" [disabled]="categoryForm.invalid">
+    Create Category
+  </button>
+</form>

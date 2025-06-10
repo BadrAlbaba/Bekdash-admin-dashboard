@@ -34,36 +34,6 @@ export class AuthService {
     }
   }
 
-  bootstrapAuth(): Observable<void> {
-    console.log('BOOTSTRAPPING AUTH...');
-    return this.refreshAccessToken().pipe(
-      switchMap((token) => {
-        if (!token) return of(null);
-        return this.getMe();
-      }),
-      tap((user) => {
-        if (user) {
-          this.userState.setUser({
-            id: user.id,
-            name: user.name,
-            role: user.role as UserRole,
-          });
-          this.authSync.broadcastLogin({
-            id: user.id,
-            name: user.name,
-            role: user.role as UserRole,
-          });
-        }
-      }),
-      map(() => void 0),
-      catchError((err) => {
-        console.warn('Auth bootstrap failed:', err.message || err);
-        this.logout();
-        return of(void 0);
-      })
-    );
-  }
-
   login(email: string, password: string): Observable<any> {
     const query = `
     mutation Login($email: String!, $password: String!, $platform: String!) {
@@ -121,20 +91,30 @@ export class AuthService {
   }
 
   logout(): void {
-    console.warn('[AuthService] Logging out!');
     this.accessToken = null;
+
+    // Clear localStorage + BehaviorSubjects
     this.userState.clearUser();
+
+    // Notify other tabs to log out as well
     this.authSync.broadcastLogout();
 
+    // Remove token from localStorage
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('accessToken');
+    }
+
+    // Optional: also clear cookies server-side
     const query = `
     mutation {
       logout
     }
-    `;
+  `;
     this.http
       .post(this.GRAPHQL_API, { query }, { withCredentials: true })
-      .subscribe(() => {
-        this.accessToken = null;
+      .subscribe({
+        next: () => console.log('[Auth] Logout complete'),
+        error: (err) => console.error('[Auth] Logout error:', err),
       });
   }
 

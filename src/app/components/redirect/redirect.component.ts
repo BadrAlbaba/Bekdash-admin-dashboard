@@ -16,7 +16,6 @@ export class RedirectComponent {
     private router: Router,
     private userState: UserStateService
   ) {
-    console.log('Redirecting...');
     if (!this.auth.isLoggedIn()) {
       this.router.navigate(['/login']);
       return;
@@ -25,8 +24,6 @@ export class RedirectComponent {
     const role = this.userState.getRole();
     if (role === 'ADMIN' || role === 'SELLER') {
       this.router.navigate(['/dashboard/products']);
-    } else {
-      this.router.navigate(['/login']);
     }
   }
 }

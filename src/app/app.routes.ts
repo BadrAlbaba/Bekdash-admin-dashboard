@@ -5,6 +5,9 @@ import { UserListComponent } from './components/user/user-list/user-list.compone
 import { ProductListComponent } from './components/product/product-list/product-list.component';
 import { LoginComponent } from './components/login/login.component';
 import { RedirectComponent } from './components/redirect/redirect.component';
+import { OrderListComponent } from './components/order/order-list/order-list.component';
+import { CategoryListComponent } from './components/category/category-list/category-list.component';
+import { CategoryFormComponent } from './components/category/category-form/category-form.component';
 
 export const routes: Routes = [
   {
@@ -34,6 +37,26 @@ export const routes: Routes = [
         loadComponent: () => ProductListComponent,
         canActivate: [AuthGuard],
         data: { roles: ['ADMIN', 'SELLER'] },
+      },
+      {
+        path: 'orders',
+        loadComponent: () => OrderListComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN', 'SELLER'] },
+      },
+      {
+        path: 'categories',
+        loadComponent: () => CategoryListComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN'] },
+        children: [
+          {
+            path: 'new',
+            loadComponent: () => CategoryFormComponent,
+            canActivate: [AuthGuard],
+            data: { roles: ['ADMIN'] },
+          },
+        ],
       },
       {
         path: '',
