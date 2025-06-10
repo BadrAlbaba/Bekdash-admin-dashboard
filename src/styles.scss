@@ -1,0 +1,47 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+// ===================
+// Global Color Variables
+// ===================
+
+:root {
+  --color-primary: #1e1e2f;
+  --color-secondary: #ffffff;
+  --color-accent: #1976d2;
+
+  --color-text: #1a1a1a;
+  --color-text-light: #888;
+
+  --color-bg: #f5f6fa;
+  --color-sidebar-bg: #1e1e2f;
+  --color-header-bg: #ffffff;
+
+  --color-link: #1976d2;
+  --color-danger: #e53935;
+}
+
+// Apply font globally
+* {
+  font-family: "Inter", sans-serif;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-bg);
+  font-size: 16px;
+  color: var(--color-text);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-bg);
+  font-size: 16px;
+  color: var(--color-text);
+  border-radius: 0 !important;
+  overflow: hidden;
+}

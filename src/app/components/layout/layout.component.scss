@@ -1,0 +1,32 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  border-radius: 0; // <- this removes the corner rounding
+  overflow: hidden;
+
+  .sidebar {
+    width: 240px;
+    background: #1e1e2f;
+    color: white;
+  }
+
+  .main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+
+    .header {
+      height: 60px;
+      background: #ffffff;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .content {
+      flex-grow: 1;
+      padding: 1rem;
+      background: #f5f6fa;
+      overflow: auto;
+    }
+  }
+}
