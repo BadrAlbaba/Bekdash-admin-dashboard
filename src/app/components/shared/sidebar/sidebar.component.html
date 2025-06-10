@@ -1,19 +1,128 @@
 <nav class="sidebar">
   <h2 class="logo">Bekdash</h2>
-  <ul>
+  <ul class="list-unstyled">
+    <!-- Products -->
     <li>
-      <a routerLink="/dashboard/products" routerLinkActive="active">Products</a>
-    </li>
-    <li>
-      <a routerLink="/dashboard/orders" routerLinkActive="active">Orders</a>
-    </li>
-    <li>
-      <a routerLink="/dashboard/categories" routerLinkActive="active"
-        >Categories</a
+      <a
+        class="btn w-100 text-start"
+        data-bs-toggle="collapse"
+        href="#productsMenu"
+        role="button"
+        aria-expanded="false"
+        aria-controls="productsMenu"
       >
+        Products
+      </a>
+      <div class="collapse ps-3" id="productsMenu">
+        <ul class="list-unstyled">
+          <li>
+            <a
+              routerLink="/dashboard/products"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              >List Products</a
+            >
+          </li>
+          <li>
+            <a routerLink="/dashboard/products/new" routerLinkActive="active"
+              >Add Product</a
+            >
+          </li>
+        </ul>
+      </div>
     </li>
+
+    <!-- Orders -->
     <li>
-      <a routerLink="/dashboard/users" routerLinkActive="active">Users</a>
+      <a
+        class="btn w-100 text-start"
+        data-bs-toggle="collapse"
+        href="#ordersMenu"
+        role="button"
+        aria-expanded="false"
+        aria-controls="ordersMenu"
+      >
+        Orders
+      </a>
+      <div class="collapse ps-3" id="ordersMenu">
+        <ul class="list-unstyled">
+          <li>
+            <a
+              routerLink="/dashboard/orders"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              >List Orders</a
+            >
+          </li>
+          <li>
+            <a routerLink="/dashboard/orders/new" routerLinkActive="active"
+              >Add Order</a
+            >
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- Categories -->
+    <li>
+      <a
+        class="btn w-100 text-start"
+        data-bs-toggle="collapse"
+        href="#categoriesMenu"
+        role="button"
+        aria-expanded="false"
+        aria-controls="categoriesMenu"
+      >
+        Categories
+      </a>
+      <div class="collapse ps-3" id="categoriesMenu">
+        <ul class="list-unstyled">
+          <li>
+            <a
+              routerLink="/dashboard/categories"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              >List Categories</a
+            >
+          </li>
+          <li>
+            <a routerLink="/dashboard/categories/new" routerLinkActive="active"
+              >Add Category</a
+            >
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- Users -->
+    <li>
+      <a
+        class="btn w-100 text-start"
+        data-bs-toggle="collapse"
+        href="#usersMenu"
+        role="button"
+        aria-expanded="false"
+        aria-controls="usersMenu"
+      >
+        Users
+      </a>
+      <div class="collapse ps-3" id="usersMenu">
+        <ul class="list-unstyled">
+          <li>
+            <a
+              routerLink="/dashboard/users"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              >List Users</a
+            >
+          </li>
+          <li>
+            <a routerLink="/dashboard/users/new" routerLinkActive="active"
+              >Add User</a
+            >
+          </li>
+        </ul>
+      </div>
     </li>
   </ul>
 </nav>

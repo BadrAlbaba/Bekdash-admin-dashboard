@@ -31,14 +31,6 @@
   }
 
   button {
-    background-color: var(--color-accent);
-    color: var(--color-secondary);
-    border: none;
-    padding: 0.75rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-
     &:disabled {
       background-color: var(--color-text-light);
       cursor: not-allowed;

@@ -7,7 +7,8 @@ import {
 } from '@angular/forms';
 import { CategoryService } from '../../../services/category/category.service';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { ToastService } from '../../../services/toast/toast.service';
 
 @Component({
   selector: 'app-category-form',
@@ -17,39 +18,57 @@ import { RouterModule } from '@angular/router';
 })
 export class CategoryFormComponent implements OnInit {
   categoryForm!: FormGroup;
+  parentCategories: any[] = [];
   levels = ['FIRST', 'SECOND', 'THIRD'];
 
   constructor(
     private fb: FormBuilder,
-    private categoryService: CategoryService
-  ) {
-    console.log('CategoryFormComponent initialized');
-  }
+    private categoryService: CategoryService,
+    private toastService: ToastService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    console.log('CategoryFormComponent initialized');
     this.categoryForm = this.fb.group({
       name: ['', Validators.required],
       level: ['FIRST', Validators.required],
       parentId: [''],
+    });
+
+    this.categoryForm.get('level')?.valueChanges.subscribe((level) => {
+      const parentCtrl = this.categoryForm.get('parentId');
+      if (level === 'FIRST') {
+        parentCtrl?.clearValidators();
+        parentCtrl?.reset();
+        this.parentCategories = [];
+      } else {
+        parentCtrl?.setValidators([Validators.required]);
+        this.categoryService.listCategoriesByLevel('FIRST').subscribe({
+          next: (categories) => (this.parentCategories = categories),
+          error: (err) => console.error('Error loading parents', err),
+        });
+      }
+      parentCtrl?.updateValueAndValidity();
     });
   }
 
   onSubmit(): void {
     if (this.categoryForm.invalid) return;
 
-    const input = this.categoryForm.value;
+    const { name, level, parentId } = this.categoryForm.value;
 
-    this.categoryService
-      .addCategory(input.name, input.level, input.parentId)
-      .subscribe({
-        next: (res) => {
-          console.log('Category created:', res);
-          this.categoryForm.reset({ level: 'FIRST' });
-        },
-        error: (err) => {
-          console.error('Error creating category:', err);
-        },
-      });
+    this.categoryService.addCategory(name, level, parentId).subscribe({
+      next: () => {
+        this.categoryForm.reset({ level: 'FIRST' });
+        this.toastService.show('Category created successfully!', 'success');
+        this.router.navigate(['dashboard/categories']);
+      },
+      error: (err) => {
+        this.toastService.show(
+          'Failed to create category: ' + err.message,
+          'error'
+        );
+      },
+    });
   }
 }

@@ -1,8 +1,6 @@
-export interface AddCategoryResponse {
-  addCategory: {
-    id: string;
-    name: string;
-    level: number;
-    parentId?: string;
-  };
+export interface Category {
+  id: string;
+  name: string;
+  level: string;
+  parentId?: string;
 }

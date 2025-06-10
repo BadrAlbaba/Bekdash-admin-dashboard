@@ -49,14 +49,13 @@ export const routes: Routes = [
         loadComponent: () => CategoryListComponent,
         canActivate: [AuthGuard],
         data: { roles: ['ADMIN'] },
-        children: [
-          {
-            path: 'new',
-            loadComponent: () => CategoryFormComponent,
-            canActivate: [AuthGuard],
-            data: { roles: ['ADMIN'] },
-          },
-        ],
+        children: [],
+      },
+      {
+        path: 'categories/new',
+        loadComponent: () => CategoryFormComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN'] },
       },
       {
         path: '',

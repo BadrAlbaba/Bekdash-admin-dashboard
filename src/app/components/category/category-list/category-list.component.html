@@ -1,5 +1,21 @@
-<!-- <button class="" (click)="navigateToNew()">Create Category</button> -->
-<a routerLink="/dashboard/categories/new" class="btn btn-primary"
-  >Create Category</a
->
-<router-outlet></router-outlet>
+<table class="table table-bordered table-hover">
+  <thead class="table-light">
+    <tr>
+      <th>Name</th>
+      <th>Level</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let category of flattenedCategories">
+      <td>
+        <span [style.marginLeft.px]="category.depth * 20">
+          <strong *ngIf="category.depth === 0">📁</strong>
+          <span *ngIf="category.depth === 1">↳</span>
+          <span *ngIf="category.depth === 2">↳↳</span>
+          {{ category.name }}
+        </span>
+      </td>
+      <td>{{ category.level }}</td>
+    </tr>
+  </tbody>
+</table>
