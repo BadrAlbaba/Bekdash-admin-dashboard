@@ -2,20 +2,46 @@
   <thead class="table-light">
     <tr>
       <th>Name</th>
-      <th>Level</th>
+      <th style="width: 200px">Actions</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let category of flattenedCategories">
+    <tr
+      *ngFor="let cat of flattenedCategories"
+      [hidden]="!cat.visible"
+      [ngClass]="{
+        'bg-white': cat.depth === 0,
+        'bg-light': cat.depth === 1,
+        'bg-secondary bg-opacity-10': cat.depth >= 2
+      }"
+    >
       <td>
-        <span [style.marginLeft.px]="category.depth * 20">
-          <strong *ngIf="category.depth === 0">📁</strong>
-          <span *ngIf="category.depth === 1">↳</span>
-          <span *ngIf="category.depth === 2">↳↳</span>
-          {{ category.name }}
+        <span
+          [style.marginLeft.px]="cat.depth * 20"
+          [style.borderLeft]="cat.depth > 0 ? '2px solid #ccc' : ''"
+          style="padding-left: 8px"
+        >
+          <button
+            *ngIf="cat.children?.length"
+            class="btn btn-sm btn-light me-1"
+            (click)="toggleExpand(cat.id)"
+          >
+            {{ cat.expanded ? "▾" : "▸" }}
+          </button>
+          {{ cat.name }}
         </span>
       </td>
-      <td>{{ category.level }}</td>
+      <td>
+        <button class="btn btn-sm btn-info me-1" (click)="onView(cat.id)">
+          View
+        </button>
+        <button class="btn btn-sm btn-warning me-1" (click)="onEdit(cat.id)">
+          Edit
+        </button>
+        <button class="btn btn-sm btn-danger" (click)="onDelete(cat)">
+          Delete
+        </button>
+      </td>
     </tr>
   </tbody>
 </table>

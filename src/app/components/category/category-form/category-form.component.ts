@@ -37,17 +37,24 @@ export class CategoryFormComponent implements OnInit {
 
     this.categoryForm.get('level')?.valueChanges.subscribe((level) => {
       const parentCtrl = this.categoryForm.get('parentId');
+
       if (level === 'FIRST') {
         parentCtrl?.clearValidators();
         parentCtrl?.reset();
         this.parentCategories = [];
       } else {
+        // Set validator for parentId
         parentCtrl?.setValidators([Validators.required]);
-        this.categoryService.listCategoriesByLevel('FIRST').subscribe({
+
+        // Determine parent level: if SECOND → parent is FIRST, if THIRD → parent is SECOND
+        const parentLevel = level === 'SECOND' ? 'FIRST' : 'SECOND';
+
+        this.categoryService.listCategoriesByLevel(parentLevel).subscribe({
           next: (categories) => (this.parentCategories = categories),
-          error: (err) => console.error('Error loading parents', err),
+          error: (err) => console.error('Error loading parent categories', err),
         });
       }
+
       parentCtrl?.updateValueAndValidity();
     });
   }

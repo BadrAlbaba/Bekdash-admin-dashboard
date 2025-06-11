@@ -8,6 +8,7 @@ import { RedirectComponent } from './components/redirect/redirect.component';
 import { OrderListComponent } from './components/order/order-list/order-list.component';
 import { CategoryListComponent } from './components/category/category-list/category-list.component';
 import { CategoryFormComponent } from './components/category/category-form/category-form.component';
+import { UserFormComponent } from './components/user/user-form/user-form.component';
 
 export const routes: Routes = [
   {
@@ -54,6 +55,12 @@ export const routes: Routes = [
       {
         path: 'categories/new',
         loadComponent: () => CategoryFormComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN'] },
+      },
+      {
+        path: 'users/new',
+        loadComponent: () => UserFormComponent,
         canActivate: [AuthGuard],
         data: { roles: ['ADMIN'] },
       },

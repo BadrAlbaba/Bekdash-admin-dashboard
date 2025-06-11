@@ -1,1 +1,64 @@
-<p>user-list works!</p>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <label>Filter by Role:</label>
+    <select
+      [(ngModel)]="roleFilter"
+      (change)="onFilterChange(roleFilter)"
+      class="form-select d-inline-block w-auto ms-2"
+    >
+      <option value="">All</option>
+      <option value="ADMIN">Admin</option>
+      <option value="SELLER">Seller</option>
+      <option value="CUSTOMER">Customer</option>
+    </select>
+  </div>
+  <input
+    type="text"
+    class="form-control w-25"
+    placeholder="Search name or email..."
+    [(ngModel)]="searchTerm"
+    (input)="onSearchChange()"
+  />
+</div>
+
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th (click)="onSort('name')" style="cursor: pointer">Name</th>
+      <th (click)="onSort('email')" style="cursor: pointer">Email</th>
+      <th>Phone</th>
+      <th>Role</th>
+      <th (click)="onSort('createdAt')" style="cursor: pointer">Created</th>
+      <th style="width: 150px">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of filteredUsers">
+      <td>
+        <a href="javascript:void(0)" (click)="viewUser(user.id)">
+          {{ user.name }}
+        </a>
+      </td>
+      <td>
+        <a href="javascript:void(0)" (click)="viewUser(user.id)">
+          {{ user.email }}
+        </a>
+      </td>
+      <td>{{ user.phone }}</td>
+      <td>{{ user.role }}</td>
+      <td>{{ user.createdAt | date : "short" }}</td>
+      <td>
+        <button class="btn btn-sm btn-primary me-1" (click)="viewUser(user.id)">
+          View
+        </button>
+        <button
+          class="btn btn-sm btn-danger"
+          [disabled]="user.id === currentUserId"
+          (click)="onDelete(user)"
+        >
+          Delete
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -79,19 +79,19 @@ export class CategoryService {
       .post<any>(this.GRAPHQL_API, {
         query: `
         query {
-          listCategories(level: FIRST) {
-            id
-            name
-            children {
-              id
-              name
-              children {
+            listCategories(level: FIRST) {
                 id
                 name
-              }
+                children {
+                id
+                name
+                children {
+                    id
+                    name
+                }
+                }
             }
-          }
-        }
+            }
       `,
       })
       .pipe(map((res) => res.data.listCategories));
