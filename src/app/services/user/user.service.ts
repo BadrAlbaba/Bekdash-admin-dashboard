@@ -66,14 +66,24 @@ export class UserService {
   }
 
   deleteUser(userId: string) {
-    return this.http.post<any>(this.GRAPHQL_API, {
-      query: `
+    return this.http
+      .post<any>(this.GRAPHQL_API, {
+        query: `
       mutation ($id: ID!) {
         deleteUser(id: $id)
       }
     `,
-      variables: { id: userId },
-    });
+        variables: { id: userId },
+      })
+      .pipe(
+        map((res) => {
+          if (res.errors?.length) {
+            // 👇 Throw the first GraphQL error so the component can catch it
+            throw new Error(res.errors[0].message);
+          }
+          return res.data.deleteUser;
+        })
+      );
   }
 
   mapGraphQLError(error: string): string {
@@ -94,5 +104,47 @@ export class UserService {
     }
 
     return 'An unexpected error occurred. Please try again.';
+  }
+
+  getUser(id: string) {
+    return this.http
+      .post<any>(this.GRAPHQL_API, {
+        query: `
+      query ($id: ID!) {
+        getUser(id: $id) {
+          id
+          name
+          email
+          phone
+          role
+          createdAt
+          address {
+            street
+            city
+            country
+          }
+        }
+      }
+    `,
+        variables: { id },
+      })
+      .pipe(map((res) => res.data.getUser));
+  }
+
+  updateUser(id: string, input: any) {
+    return this.http
+      .post<any>(this.GRAPHQL_API, {
+        query: `
+      mutation ($id: ID!, $input: UpdateUserInput!) {
+        updateUser(id: $id, input: $input) {
+          id
+          name
+          email
+        }
+      }
+    `,
+        variables: { id, input },
+      })
+      .pipe(map((res) => res.data.updateUser));
   }
 }

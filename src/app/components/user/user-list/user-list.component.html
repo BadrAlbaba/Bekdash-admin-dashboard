@@ -48,8 +48,11 @@
       <td>{{ user.role }}</td>
       <td>{{ user.createdAt | date : "short" }}</td>
       <td>
-        <button class="btn btn-sm btn-primary me-1" (click)="viewUser(user.id)">
+        <button class="btn btn-sm btn-info me-1" (click)="viewUser(user.id)">
           View
+        </button>
+        <button class="btn btn-sm btn-warning me-1" (click)="editUser(user.id)">
+          Edit
         </button>
         <button
           class="btn btn-sm btn-danger"

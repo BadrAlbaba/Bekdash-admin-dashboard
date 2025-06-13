@@ -1,1 +1,122 @@
-<p>user-detail works!</p>
+<div *ngIf="loading" class="text-center py-4">
+  <div class="spinner-border text-primary"></div>
+</div>
+
+<div *ngIf="error" class="alert alert-danger">
+  {{ error }}
+</div>
+
+<div *ngIf="user && !loading" class="card shadow-sm p-4">
+  <h4 class="mb-4">User Details</h4>
+
+  <div class="row mb-2">
+    <div class="col-md-6"><strong>Name:</strong> {{ user.name }}</div>
+    <div class="col-md-6"><strong>Email:</strong> {{ user.email }}</div>
+  </div>
+
+  <div class="row mb-2">
+    <div class="col-md-6"><strong>Phone:</strong> {{ user.phone }}</div>
+    <div class="col-md-6"><strong>Role:</strong> {{ user.role }}</div>
+  </div>
+
+  <div class="row mb-2">
+    <div class="col-md-6">
+      <strong>Created At:</strong> {{ user.createdAt | date : "medium" }}
+    </div>
+  </div>
+
+  <div *ngIf="user.address" class="mt-4">
+    <h5 class="mb-3">Address</h5>
+    <p class="mb-1"><strong>Street:</strong> {{ user.address.street }}</p>
+    <p class="mb-1"><strong>City:</strong> {{ user.address.city }}</p>
+    <p class="mb-1"><strong>Country:</strong> {{ user.address.country }}</p>
+  </div>
+</div>
+
+<div *ngIf="user?.customer" class="mt-4">
+  <h5>Customer Info</h5>
+  <p>
+    <strong>Verified:</strong> {{ user.customer.isVerified ? "Yes" : "No" }}
+  </p>
+  <p><strong>Orders:</strong> {{ user.customer._count.orders }}</p>
+  <p><strong>Reviews:</strong> {{ user.customer._count.reviews }}</p>
+  <p><strong>Wishlist items:</strong> {{ user.customer._count.wishlist }}</p>
+  <p><strong>Basket items:</strong> {{ user.customer._count.basket }}</p>
+</div>
+
+<div *ngIf="user?.seller" class="mt-4">
+  <h5>Seller Info</h5>
+  <p><strong>Products:</strong> {{ user.seller._count.products }}</p>
+</div>
+
+<div *ngIf="user?.customer?.orders?.length" class="mt-4">
+  <h5>Recent Orders</h5>
+  <table class="table table-sm table-bordered">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Date</th>
+        <th>Items</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of user.customer.orders">
+        <td>
+          <a [routerLink]="['/dashboard/orders', order.id]"
+            >{{ order.id | slice : 0 : 8 }}...</a
+          >
+        </td>
+        <td>{{ order.createdAt | date : "short" }}</td>
+        <td>
+          <ul class="mb-0 ps-3">
+            <li *ngFor="let item of order.items">
+              {{ item.product.title }} (x{{ item.quantity }})
+            </li>
+          </ul>
+        </td>
+        <td>
+          {{ getOrderTotal(order) | currency }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div *ngIf="user?.seller?.products?.length" class="mt-4">
+  <h5>Recent Products</h5>
+  <table class="table table-sm table-striped">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Active</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of user.seller.products">
+        <td>{{ product.title }}</td>
+        <td>{{ product.price | currency }}</td>
+        <td>{{ product.stock }}</td>
+        <td>
+          <span
+            class="badge"
+            [class.bg-success]="product.active"
+            [class.bg-secondary]="!product.active"
+          >
+            {{ product.active ? "Yes" : "No" }}
+          </span>
+        </td>
+        <td>
+          <a
+            [routerLink]="['/dashboard/products', product.id]"
+            class="btn btn-sm btn-outline-primary"
+            >View</a
+          >
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

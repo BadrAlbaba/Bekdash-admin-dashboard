@@ -1,1 +1,100 @@
-<p>product-form works!</p>
+<h4 class="mb-4">Add Product</h4>
+
+<form
+  [formGroup]="productForm"
+  (ngSubmit)="onSubmit()"
+  class="p-4 border rounded bg-light"
+>
+  <!-- Title -->
+  <div class="mb-3">
+    <label>Title</label>
+    <input formControlName="title" class="form-control" />
+  </div>
+
+  <!-- Description -->
+  <div class="mb-3">
+    <label>Description</label>
+    <textarea formControlName="description" class="form-control"></textarea>
+  </div>
+
+  <!-- Price -->
+  <div class="mb-3">
+    <label>Price</label>
+    <input type="number" formControlName="price" class="form-control" />
+  </div>
+
+  <!-- Stock -->
+  <div class="mb-3">
+    <label>Stock</label>
+    <input type="number" formControlName="stock" class="form-control" />
+  </div>
+
+  <!-- Categories -->
+  <div class="mb-3">
+    <label class="form-label">Categories</label>
+    <ng-select
+      [items]="categories"
+      bindLabel="name"
+      bindValue="id"
+      formControlName="categoryIds"
+      [multiple]="true"
+      [closeOnSelect]="false"
+      placeholder="Select categories"
+      class="form-control"
+    >
+    </ng-select>
+  </div>
+
+  <!-- Thumbnail -->
+  <div class="mb-3">
+    <label>Upload Thumbnail</label>
+    <input
+      type="file"
+      (change)="onThumbnailSelected($event)"
+      class="form-control"
+    />
+    <div *ngIf="pendingThumbnailFile" class="mt-2">
+      <img [src]="pendingThumbnailFile" class="img-thumbnail" width="100" />
+    </div>
+  </div>
+
+  <!-- Product Images -->
+  <div class="mb-3">
+    <label>Upload Product Images</label>
+    <input
+      type="file"
+      (change)="onImageSelected($event)"
+      multiple
+      class="form-control"
+    />
+    <div *ngIf="pendingImageFiles.length" class="mt-2">
+      <small
+        >{{ pendingImageFiles.length }} image(s) selected, will upload after
+        product creation</small
+      >
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <button type="submit" class="btn btn-primary">Create Product</button>
+</form>
+
+<!-- After product is created: show uploaded images -->
+<div *ngIf="productId" class="mt-4">
+  <h5>Uploaded Images</h5>
+  <div class="d-flex flex-wrap gap-2">
+    <div
+      *ngFor="let img of productImages; let i = index"
+      class="position-relative"
+    >
+      <img [src]="img.url" class="img-thumbnail" width="100" />
+      <button
+        type="button"
+        class="btn btn-sm btn-danger position-absolute top-0 end-0"
+        (click)="onRemoveImage(img.id, i)"
+      >
+        &times;
+      </button>
+    </div>
+  </div>
+</div>

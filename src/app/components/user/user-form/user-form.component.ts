@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { UserService } from '../../../services/user/user.service';
 import { ToastService } from '../../../services/toast/toast.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -18,21 +18,25 @@ import { CommonModule } from '@angular/common';
 })
 export class UserFormComponent implements OnInit {
   userForm!: FormGroup;
-  roles = ['SELLER', 'CUSTOMER'];
+  isEditMode = false;
+  userId: string | null = null;
+  roles = ['CUSTOMER', 'SELLER', 'ADMIN'];
 
   constructor(
-    private fb: FormBuilder,
+    private route: ActivatedRoute,
     private userService: UserService,
+    private fb: FormBuilder,
     private toast: ToastService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    console.log('UserFormComponent initialized');
     this.userForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: [''], // only required on create
       role: ['SELLER', Validators.required],
       address: this.fb.group({
         street: ['', Validators.required],
@@ -40,20 +44,68 @@ export class UserFormComponent implements OnInit {
         country: ['', Validators.required],
       }),
     });
+
+    this.userId = this.route.snapshot.paramMap.get('id');
+    console.log('User ID from route:', this.userId);
+    this.isEditMode = !!this.userId;
+
+    if (this.isEditMode) {
+      this.userService.getUser(this.userId!).subscribe({
+        next: (user) => this.patchForm(user),
+        error: () => this.toast.show('Failed to load user', 'error'),
+      });
+    }
+  }
+
+  patchForm(user: any) {
+    this.userForm.patchValue({
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      address: {
+        street: user.address?.street || '',
+        city: user.address?.city || '',
+        country: user.address?.country || '',
+      },
+    });
+    // Do not patch password
   }
 
   onSubmit() {
     if (this.userForm.invalid) return;
 
-    this.userService.registerUser(this.userForm.value).subscribe({
-      next: () => {
-        this.toast.show('User registered successfully', 'success');
-        this.router.navigate(['/dashboard/users']);
-      },
-      error: (err) => {
-        this.toast.show('Failed to register user: ' + err.message, 'error');
-      },
-    });
+    const formValue = this.userForm.value;
+
+    delete formValue.password;
+
+    if (this.isEditMode) {
+      this.userService.updateUser(this.userId!, formValue).subscribe({
+        next: () => {
+          this.toast.show('User updated successfully', 'success');
+          this.router.navigate(['/dashboard/users']);
+        },
+        error: (err) => {
+          const msg = this.userService.mapGraphQLError(
+            err?.error?.errors?.[0]?.message || ''
+          );
+          this.toast.show(msg, 'error');
+        },
+      });
+    } else {
+      this.userService.registerUser(formValue).subscribe({
+        next: () => {
+          this.toast.show('User created successfully', 'success');
+          this.router.navigate(['/dashboard/users']);
+        },
+        error: (err) => {
+          const msg = this.userService.mapGraphQLError(
+            err?.error?.errors?.[0]?.message || ''
+          );
+          this.toast.show(msg, 'error');
+        },
+      });
+    }
   }
 
   get addressForm(): FormGroup {

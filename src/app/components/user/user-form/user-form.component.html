@@ -1,3 +1,5 @@
+<h4 class="mb-4">{{ isEditMode ? "Edit User" : "Create User" }}</h4>
+
 <form
   [formGroup]="userForm"
   (ngSubmit)="onSubmit()"
@@ -15,7 +17,7 @@
     <label>Phone</label>
     <input formControlName="phone" type="text" class="form-control" />
   </div>
-  <div class="mb-3">
+  <div class="mb-3" *ngIf="!isEditMode">
     <label>Password</label>
     <input formControlName="password" type="password" class="form-control" />
   </div>
@@ -47,6 +49,6 @@
     </select>
   </div>
   <button type="submit" class="btn btn-success" [disabled]="userForm.invalid">
-    Add User
+    {{ isEditMode ? "Update User" : "Add User" }}
   </button>
 </form>

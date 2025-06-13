@@ -9,6 +9,8 @@ import { OrderListComponent } from './components/order/order-list/order-list.com
 import { CategoryListComponent } from './components/category/category-list/category-list.component';
 import { CategoryFormComponent } from './components/category/category-form/category-form.component';
 import { UserFormComponent } from './components/user/user-form/user-form.component';
+import { UserDetailComponent } from './components/user/user-detail/user-detail.component';
+import { ProductFormComponent } from './components/product/product-form/product-form.component';
 
 export const routes: Routes = [
   {
@@ -34,8 +36,26 @@ export const routes: Routes = [
         data: { roles: ['ADMIN'] },
       },
       {
+        path: 'users/new',
+        loadComponent: () => UserFormComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN'] },
+      },
+      {
+        loadComponent: () => UserDetailComponent,
+        path: 'users/:id',
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN'] },
+      },
+      {
         path: 'products',
         loadComponent: () => ProductListComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN', 'SELLER'] },
+      },
+      {
+        path: 'products/new',
+        loadComponent: () => ProductFormComponent,
         canActivate: [AuthGuard],
         data: { roles: ['ADMIN', 'SELLER'] },
       },
@@ -59,8 +79,8 @@ export const routes: Routes = [
         data: { roles: ['ADMIN'] },
       },
       {
-        path: 'users/new',
         loadComponent: () => UserFormComponent,
+        path: 'users/edit/:id',
         canActivate: [AuthGuard],
         data: { roles: ['ADMIN'] },
       },

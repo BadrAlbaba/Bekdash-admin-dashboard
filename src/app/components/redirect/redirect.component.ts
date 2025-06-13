@@ -18,11 +18,13 @@ export class RedirectComponent {
   ) {
     if (!this.auth.isLoggedIn()) {
       this.router.navigate(['/login']);
+      console.log('Redirecting to login because user is not logged in');
       return;
     }
 
     const role = this.userState.getRole();
     if (role === 'ADMIN' || role === 'SELLER') {
+      console.log('Redirecting to dashboard for ADMIN or SELLER');
       this.router.navigate(['/dashboard/products']);
     }
   }

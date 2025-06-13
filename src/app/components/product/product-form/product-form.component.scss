@@ -1,0 +1,42 @@
+::ng-deep .ng-select {
+  font-size: 0.95rem;
+}
+
+::ng-deep .ng-dropdown-panel {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.05);
+  z-index: 1050; // Ensures it's above other elements
+}
+
+::ng-deep .ng-dropdown-panel .ng-option {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #f1f1f1;
+  cursor: pointer;
+}
+
+::ng-deep .ng-dropdown-panel .ng-option:hover {
+  background-color: #f8f9fa; // Light gray hover
+}
+
+::ng-deep .ng-select.ng-select-multiple .ng-select-container {
+  min-height: 38px;
+  border-radius: 0.25rem;
+}
+
+::ng-deep .ng-select .ng-select-container {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  border-radius: 0.25rem;
+  font-size: 0.95rem;
+}
+
+::ng-deep .ng-select .ng-value {
+  background-color: #0d6efd;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-right: 4px;
+  font-size: 0.875rem;
+}

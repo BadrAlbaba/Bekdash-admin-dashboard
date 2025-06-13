@@ -85,7 +85,11 @@ export class UserListComponent implements OnInit {
   }
 
   viewUser(userId: string) {
-    this.router.navigate(['/dashboard/users', userId]);
+    this.router.navigate([`/dashboard/users/${userId}`]);
+  }
+
+  editUser(userId: string) {
+    this.router.navigate([`/dashboard/users/edit/${userId}`]);
   }
 
   onDelete(user: any) {
@@ -96,14 +100,14 @@ export class UserListComponent implements OnInit {
 
         this.userService.deleteUser(user.id).subscribe({
           next: () => {
-            this.toastService.show('User deleted', 'success');
-            this.loadUsers();
+            this.toastService.show('User deleted successfully', 'success');
+            this.loadUsers(); // Refresh list
           },
           error: (err) => {
-            const msg = this.userService.mapGraphQLError(
-              err?.error?.errors?.[0]?.message || ''
+            this.toastService.show(
+              `Error deleting user: ${err.message}`,
+              'error'
             );
-            this.toastService.show(msg, 'error');
           },
         });
       });
