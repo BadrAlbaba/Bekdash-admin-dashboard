@@ -83,7 +83,6 @@ export class CategoryListComponent implements OnInit {
   }
 
   onEdit(categoryId: string) {
-    console.log('Edit', categoryId);
     // Navigate or open modal...
   }
 

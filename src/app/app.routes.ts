@@ -16,7 +16,7 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () => RedirectComponent,
-    data: { title: 'Redirect' },
+    data: { title: 'Login' },
   },
   {
     path: 'login',

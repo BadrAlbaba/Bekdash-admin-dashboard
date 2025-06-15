@@ -23,6 +23,8 @@ import { UploadService } from '../../../services/upload/upload.service';
   styleUrls: ['./product-form.component.scss'],
 })
 export class ProductFormComponent implements OnInit {
+  loading = false;
+
   productForm!: FormGroup;
   categories: any[] = [];
   productId: string = '';
@@ -91,6 +93,8 @@ export class ProductFormComponent implements OnInit {
       return;
     }
 
+    this.loading = true; // Start loading spinner
+
     const productData = this.productForm.value;
 
     this.productService.addProduct(productData).subscribe({
@@ -102,9 +106,19 @@ export class ProductFormComponent implements OnInit {
         );
         this.uploadPendingImages();
         this.UploadPenidngThumbnail();
-        this.router.navigate(['/dashboard/products']);
+
+        setTimeout(() => {
+          this.loading = false; // Stop loading spinner before navigation
+          this.router.navigate(['/dashboard/products']);
+        }, 1000);
+
+        this.toastService.show(
+          'Product created successfully and images added succesfully',
+          'success'
+        );
       },
       error: (err) => {
+        this.loading = false; // Stop loading spinner on error
         this.toastService.show(
           `Product creation failed: ${err.message}`,
           'error'
@@ -118,16 +132,7 @@ export class ProductFormComponent implements OnInit {
       this.uploadService.uploadImage(this.pendingThumbnailFile).subscribe({
         next: (url) => {
           this.productService
-            .updateProduct(this.productId, {
-              title: undefined,
-              description: undefined,
-              price: undefined,
-              stock: undefined,
-              active: undefined,
-              categoryIds: undefined,
-              images: undefined,
-              thumbnail: url,
-            })
+            .updateProductThumbnail(this.productId, url)
             .subscribe({
               next: (product) => {
                 this.productThumbnail = product.thumbnail;
@@ -147,6 +152,8 @@ export class ProductFormComponent implements OnInit {
     } else {
       this.toastService.show('No thumbnail file selected', 'info');
     }
+
+    this.pendingThumbnailFile = null;
   }
 
   uploadPendingImages() {
@@ -162,14 +169,17 @@ export class ProductFormComponent implements OnInit {
             },
             error: (err) => {
               this.toastService.show(
-                `Link image failed: ${err.message}`,
+                `Uploading images failed: ${err.message}`,
                 'error'
               );
             },
           });
         },
         error: (err) => {
-          this.toastService.show(`Upload failed: ${err.message}`, 'error');
+          this.toastService.show(
+            `Uploading image failed: ${err.message}`,
+            'error'
+          );
         },
       });
     });

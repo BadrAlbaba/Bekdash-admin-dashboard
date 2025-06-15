@@ -24,15 +24,10 @@ export class AuthGuard implements CanActivate {
       this.auth.isLoggedIn() &&
       (!expectedRoles || expectedRoles.includes(role!))
     ) {
-      console.log('AuthGuard: User is logged in and has the required role');
       return true;
     } else if (this.auth.isLoggedIn() && !expectedRoles) {
-      console.log('AuthGuard: User is logged in but no specific role required');
       return this.router.parseUrl('/dashboard');
     } else {
-      console.log(
-        'AuthGuard: User is not logged in or does not have the required role'
-      );
       return false;
     }
   }

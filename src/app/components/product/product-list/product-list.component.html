@@ -1,1 +1,219 @@
-<p>product-list works!</p>
+<h4 class="mb-4">Product List</h4>
+
+<div class="bg-light p-3 rounded shadow-sm mb-3">
+  <div class="d-flex flex-wrap align-items-center gap-2">
+    <!-- ADMIN: dropdown to choose all/my products -->
+    <div *ngIf="isAdmin" class="w-auto">
+      <select
+        class="form-select form-select-sm"
+        [(ngModel)]="listMode"
+        (change)="loadProducts()"
+      >
+        <option value="ALL">All Products</option>
+        <option value="MY">My Products</option>
+      </select>
+    </div>
+
+    <!-- Search + filters -->
+    <input
+      type="text"
+      class="form-control form-control-sm w-auto"
+      placeholder="🔍 Search title"
+      (input)="onSearchChange($event)"
+    />
+
+    <input
+      type="number"
+      class="form-control form-control-sm w-auto"
+      placeholder="Min Price"
+      [(ngModel)]="filters.minPrice"
+      (change)="loadProducts()"
+    />
+
+    <input
+      type="number"
+      class="form-control form-control-sm w-auto"
+      placeholder="Max Price"
+      [(ngModel)]="filters.maxPrice"
+      (change)="loadProducts()"
+    />
+
+    <ng-select
+      [items]="categories"
+      bindLabel="name"
+      bindValue="id"
+      [multiple]="true"
+      [(ngModel)]="filters.categoryIds"
+      placeholder="Select categories"
+      class="w-auto"
+      (change)="loadProducts()"
+    ></ng-select>
+
+    <select
+      class="form-select form-select-sm w-auto"
+      [(ngModel)]="sortMode"
+      (change)="loadProducts()"
+    >
+      <option value="AVERAGE_RATING">Average Rating</option>
+      <option value="PRICE">Price</option>
+      <option value="CREATED_AT">Created At</option>
+    </select>
+
+    <select
+      class="form-select form-select-sm w-auto"
+      [(ngModel)]="sortOrder"
+      (change)="loadProducts()"
+    >
+      <option value="DESC">Desc</option>
+      <option value="ASC">Asc</option>
+    </select>
+  </div>
+</div>
+
+<!-- Pagination -->
+
+<div
+  class="d-flex justify-content-center align-items-center gap-2 mt-3 mb-3 p-3"
+  *ngIf="!loading && totalCount > 0"
+>
+  <button
+    class="btn btn-outline-primary btn-sm"
+    [disabled]="page === 1"
+    (click)="previousPage()"
+  >
+    &laquo; Previous
+  </button>
+
+  <span class="small text-muted">Showing {{ showingRange }}</span>
+
+  <button
+    class="btn btn-outline-primary btn-sm"
+    [disabled]="page === totalPages"
+    (click)="nextPage()"
+  >
+    Next &raquo;
+  </button>
+</div>
+
+<!-- Products Table -->
+
+<table class="table table-striped table-hover align-middle">
+  <thead class="table-light">
+    <tr>
+      <th (click)="setSort('TITLE')" style="cursor: pointer">
+        Title <span [innerHTML]="getSortIcon('TITLE')"></span>
+      </th>
+      <th (click)="setSort('PRICE')" style="cursor: pointer">
+        Price <span [innerHTML]="getSortIcon('PRICE')"></span>
+      </th>
+      <th>Stock</th>
+      <th (click)="setSort('AVERAGE_RATING')" style="cursor: pointer">
+        Rating <span [innerHTML]="getSortIcon('AVERAGE_RATING')"></span>
+      </th>
+      <th *ngIf="isAdmin">Seller</th>
+      <th>Active</th>
+      <th>Reviews</th>
+      <th>Orders</th>
+      <th>Categories</th>
+      <th>Thumbnail</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let product of products">
+      <td>{{ product.title }}</td>
+      <td>{{ product.price | currency }}</td>
+      <td>{{ product.stock }}</td>
+      <td>{{ product.averageRating }}</td>
+      <td *ngIf="isAdmin">{{ product.seller?.user?.name }}</td>
+      <td>
+        <span
+          class="badge"
+          [ngClass]="product.active ? 'bg-success' : 'bg-danger'"
+        >
+          {{ product.active ? "Active" : "Inactive" }}
+        </span>
+      </td>
+      <td>{{ product.reviews?.length || 0 }}</td>
+      <td>{{ product.orderItems?.length || 0 }}</td>
+      <td>
+        <span
+          class="badge bg-secondary me-1"
+          *ngFor="let cat of product.categories"
+        >
+          {{ cat.name }}
+        </span>
+      </td>
+      <td>
+        <img
+          *ngIf="product.thumbnail"
+          [src]="getThumbnailUrl(product.thumbnail)"
+          class="img-thumbnail"
+          width="60"
+          height="60"
+        />
+        <span *ngIf="!product.thumbnail" class="text-muted">No image</span>
+      </td>
+      <td>
+        <button
+          class="btn btn-sm btn-primary me-1 button-margin-top"
+          (click)="viewProduct(product.id)"
+        >
+          View
+        </button>
+        <button
+          class="btn btn-sm btn-secondary me-1 button-margin-top"
+          (click)="editProduct(product.id)"
+        >
+          Edit
+        </button>
+
+        <button
+          class="btn btn-sm me-1 button-margin-top"
+          [ngClass]="product.active ? 'btn-warning' : 'btn-success'"
+          (click)="toggleActive(product)"
+        >
+          {{ product.active ? "Deactivate" : "Activate" }}
+        </button>
+
+        <button
+          class="btn btn-sm btn-danger me-1 button-margin-top"
+          (click)="deleteProduct(product.id)"
+        >
+          Delete
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Pagination -->
+
+<div
+  *ngIf="!loading && products.length === 0"
+  class="alert alert-info mt-3 mb-3 p-3"
+>
+  No products found.
+</div>
+<div
+  class="d-flex justify-content-center align-items-center gap-2 mt-3 mb-3 p-3"
+  *ngIf="!loading && totalCount > 0"
+>
+  <button
+    class="btn btn-outline-primary btn-sm"
+    [disabled]="page === 1"
+    (click)="previousPage()"
+  >
+    &laquo; Previous
+  </button>
+
+  <span class="small text-muted">Showing {{ showingRange }}</span>
+
+  <button
+    class="btn btn-outline-primary btn-sm"
+    [disabled]="page === totalPages"
+    (click)="nextPage()"
+  >
+    Next &raquo;
+  </button>
+</div>

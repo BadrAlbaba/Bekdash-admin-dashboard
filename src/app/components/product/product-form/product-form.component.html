@@ -45,6 +45,17 @@
     </ng-select>
   </div>
 
+  <!-- Active -->
+  <div class="mb-3 form-check">
+    <input
+      type="checkbox"
+      formControlName="active"
+      class="form-check-input"
+      id="activeCheck"
+    />
+    <label class="form-check-label" for="activeCheck">Active</label>
+  </div>
+
   <!-- Thumbnail -->
   <div class="mb-3">
     <label>Upload Thumbnail</label>
@@ -53,9 +64,6 @@
       (change)="onThumbnailSelected($event)"
       class="form-control"
     />
-    <div *ngIf="pendingThumbnailFile" class="mt-2">
-      <img [src]="pendingThumbnailFile" class="img-thumbnail" width="100" />
-    </div>
   </div>
 
   <!-- Product Images -->
@@ -76,25 +84,8 @@
   </div>
 
   <!-- Submit -->
-  <button type="submit" class="btn btn-primary">Create Product</button>
+  <button type="submit" class="btn btn-primary" [disabled]="loading">
+    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+    {{ loading ? "Processing..." : "Create Product" }}
+  </button>
 </form>
-
-<!-- After product is created: show uploaded images -->
-<div *ngIf="productId" class="mt-4">
-  <h5>Uploaded Images</h5>
-  <div class="d-flex flex-wrap gap-2">
-    <div
-      *ngFor="let img of productImages; let i = index"
-      class="position-relative"
-    >
-      <img [src]="img.url" class="img-thumbnail" width="100" />
-      <button
-        type="button"
-        class="btn btn-sm btn-danger position-absolute top-0 end-0"
-        (click)="onRemoveImage(img.id, i)"
-      >
-        &times;
-      </button>
-    </div>
-  </div>
-</div>

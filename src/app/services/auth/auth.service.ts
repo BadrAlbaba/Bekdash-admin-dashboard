@@ -7,6 +7,7 @@ import { LoginResponse } from '../../models/auth.models';
 import { UserRole, UserStateService } from './user-state.service';
 import { AuthSyncService } from './auth-sync.service';
 import { isPlatformBrowser } from '@angular/common';
+import { ToastService } from '../toast/toast.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -17,6 +18,7 @@ export class AuthService {
     private http: HttpClient,
     private userState: UserStateService,
     private authSync: AuthSyncService,
+    private toastService: ToastService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     if (isPlatformBrowser(this.platformId)) {
@@ -70,6 +72,12 @@ export class AuthService {
         }),
         switchMap(() => this.getMe()),
         tap((user) => {
+          if (user.role !== 'USER' && user.role !== 'ADMIN') {
+            this.toastService.show(
+              'Access denied: Invalid user role.',
+              'error'
+            );
+          }
           this.userState.setUser({
             id: user.id,
             name: user.name,
@@ -79,7 +87,7 @@ export class AuthService {
             id: user.id,
             name: user.name,
             role: user.role as UserRole,
-          }); // notify other tabs
+          });
         }),
         catchError((err) => {
           //TODO handle specific error cases (Tosaster maybe?))
@@ -112,10 +120,7 @@ export class AuthService {
   `;
     this.http
       .post(this.GRAPHQL_API, { query }, { withCredentials: true })
-      .subscribe({
-        next: () => console.log('[Auth] Logout complete'),
-        error: (err) => console.error('[Auth] Logout error:', err),
-      });
+      .subscribe();
   }
 
   setAccessToken(token: string): void {

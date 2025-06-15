@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Route, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from './services/auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { ToastComponent } from './components/shared/toast/toast.component';
@@ -11,17 +11,14 @@ import { ToastComponent } from './components/shared/toast/toast.component';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private route: Router) {}
 
   ngOnInit() {
     const token = this.authService.getAccessToken();
     if (token) {
       this.authService.getMe().subscribe({
-        next: () => {
-          console.log('User session restored.');
-        },
+        next: () => {},
         error: (err) => {
-          console.warn('Failed to fetch user info', err.message);
           this.authService.logout();
         },
       });

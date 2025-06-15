@@ -11,21 +11,11 @@ import { UserStateService } from '../../services/auth/user-state.service';
   imports: [LoaderComponent],
 })
 export class RedirectComponent {
-  constructor(
-    private auth: AuthService,
-    private router: Router,
-    private userState: UserStateService
-  ) {
-    if (!this.auth.isLoggedIn()) {
-      this.router.navigate(['/login']);
-      console.log('Redirecting to login because user is not logged in');
-      return;
-    }
-
-    const role = this.userState.getRole();
-    if (role === 'ADMIN' || role === 'SELLER') {
-      console.log('Redirecting to dashboard for ADMIN or SELLER');
+  constructor(private auth: AuthService, private router: Router) {
+    if (this.auth.isLoggedIn()) {
       this.router.navigate(['/dashboard/products']);
+    } else {
+      this.router.navigate(['/login']);
     }
   }
 }

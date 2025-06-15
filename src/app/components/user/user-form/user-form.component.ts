@@ -31,7 +31,6 @@ export class UserFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('UserFormComponent initialized');
     this.userForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -46,7 +45,6 @@ export class UserFormComponent implements OnInit {
     });
 
     this.userId = this.route.snapshot.paramMap.get('id');
-    console.log('User ID from route:', this.userId);
     this.isEditMode = !!this.userId;
 
     if (this.isEditMode) {

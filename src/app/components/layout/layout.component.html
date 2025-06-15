@@ -1,5 +1,12 @@
 <div class="layout">
-  <app-sidebar class="sidebar"></app-sidebar>
+  <button class="toggle-sidebar-btn" (click)="toggleSidebar()">
+    <i class="bi bi-arrow-bar-right"></i>
+  </button>
+  <app-sidebar
+    class="sidebar"
+    [ngClass]="{ closed: isSidebarClosed }"
+  ></app-sidebar>
+
   <div class="main">
     <app-header class="header"></app-header>
     <main class="content">
