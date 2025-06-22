@@ -15,7 +15,7 @@
     padding: 0.5rem;
 
     &:hover {
-      color: var(--color-accent) !important;
+      color: var(--color-third) !important;
     }
   }
 
@@ -50,6 +50,14 @@
       padding: 1rem;
       background: #f5f6fa;
       overflow: auto;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .layout {
+    .header {
+      height: fit-content !important;
     }
   }
 }

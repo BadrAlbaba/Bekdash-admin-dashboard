@@ -1,27 +1,142 @@
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 1rem;
-  height: 60px;
-  background-color: var(--color-header-bg);
-  color: var(--color-text);
-  border-bottom: 1px solid #ddd;
+.navbar {
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+  padding: 0.75rem 1.5rem;
 
-  .title {
-    font-weight: 600;
-    font-size: 1.1rem;
+  .navbar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: 1.5rem;
+    font-weight: bold;
   }
 
-  button {
+  .hamburger {
+    display: none;
+    font-size: 1.5rem;
     background: none;
     border: none;
-    color: #1e1e2f;
-    font-weight: 500;
+    color: var(--color-text-light);
     cursor: pointer;
+  }
+}
 
-    &:hover {
-      text-decoration: underline;
+.navbar-menu {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  .dropdown {
+    position: relative;
+    margin: 0 1rem;
+
+    .dropbtn {
+      background-color: var(--color-primary);
+      border: none;
+      color: var(--color-text-light);
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+
+      &:hover {
+        background-color: var(--color-accent);
+      }
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: var(--color-accent);
+      min-width: 160px;
+      z-index: 1;
+      top: 100%;
+      left: 0;
+
+      a {
+        color: white;
+        padding: 0.5rem 1rem;
+        display: block;
+        text-decoration: none;
+
+        &:hover {
+          background-color: #3d566e;
+        }
+      }
+    }
+
+    &:hover .dropdown-content {
+      display: block;
+    }
+  }
+
+  .logout-mobile {
+    display: none;
+  }
+}
+
+.logout-btn {
+  background-color: #e74c3c;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: #c0392b;
+  }
+}
+
+.desktop-only {
+  display: inline-block;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .navbar {
+    .navbar-header {
+      .hamburger {
+        display: block;
+        position: fixed;
+        top: 7px;
+        right: 20px;
+      }
+    }
+
+    .navbar-menu {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      margin-top: 1rem;
+
+      &.open {
+        display: flex;
+      }
+
+      .dropdown {
+        width: 100%;
+
+        .dropbtn {
+          width: 100%;
+          text-align: left;
+        }
+
+        .dropdown-content {
+          position: static;
+          width: 100%;
+        }
+      }
+
+      .logout-mobile {
+        display: block;
+        margin-top: 1rem;
+      }
+    }
+
+    .desktop-only {
+      display: none;
     }
   }
 }

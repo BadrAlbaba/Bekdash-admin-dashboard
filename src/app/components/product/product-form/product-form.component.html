@@ -1,4 +1,4 @@
-<h4 class="mb-4">Add Product</h4>
+<h4 class="mb-4">{{ productId ? "Edit Product" : "Add Product" }}</h4>
 
 <form
   [formGroup]="productForm"
@@ -14,7 +14,13 @@
   <!-- Description -->
   <div class="mb-3">
     <label>Description</label>
-    <textarea formControlName="description" class="form-control"></textarea>
+    <quill-editor
+      formControlName="description"
+      [styles]="{ height: '200px', width: '100%' }"
+      [placeholder]="'Enter product description...'"
+      [modules]="quillModules"
+      class="form-control quill-custom"
+    ></quill-editor>
   </div>
 
   <!-- Price -->
@@ -31,7 +37,7 @@
 
   <!-- Categories -->
   <div class="mb-3">
-    <label class="form-label">Categories</label>
+    <label>Categories</label>
     <ng-select
       [items]="categories"
       bindLabel="name"
@@ -41,8 +47,7 @@
       [closeOnSelect]="false"
       placeholder="Select categories"
       class="form-control"
-    >
-    </ng-select>
+    ></ng-select>
   </div>
 
   <!-- Active -->
@@ -56,7 +61,7 @@
     <label class="form-check-label" for="activeCheck">Active</label>
   </div>
 
-  <!-- Thumbnail -->
+  <!-- Thumbnail Upload -->
   <div class="mb-3">
     <label>Upload Thumbnail</label>
     <input
@@ -66,8 +71,46 @@
     />
   </div>
 
-  <!-- Product Images -->
-  <div class="mb-3">
+  <!-- Existing Thumbnail -->
+  <div *ngIf="productThumbnail && !thumbnailPreviewUrl" class="mt-2">
+    <h6 class="text-muted">Current Thumbnail</h6>
+    <div class="position-relative" style="width: 100px">
+      <img
+        [src]="getImageUrl(productThumbnail)"
+        class="img-thumbnail w-100 p-1"
+        style="height: auto"
+      />
+      <button
+        type="button"
+        class="btn-close position-absolute"
+        style="top: 2px; right: 2px"
+        aria-label="Remove"
+        (click)="removeExistingThumbnail()"
+      ></button>
+    </div>
+  </div>
+
+  <!-- Thumbnail preview -->
+  <div *ngIf="thumbnailPreviewUrl" class="mt-2">
+    <h6 class="text-muted">New Thumbnail Preview</h6>
+    <div class="position-relative" style="width: 100px">
+      <img
+        [src]="thumbnailPreviewUrl"
+        class="img-thumbnail w-100 p-1"
+        style="height: auto"
+      />
+      <button
+        type="button"
+        class="btn-close position-absolute"
+        style="top: 2px; right: 2px"
+        aria-label="Remove"
+        (click)="removeThumbnailPreview()"
+      ></button>
+    </div>
+  </div>
+
+  <!-- Product Images Upload -->
+  <div class="mb-3 mt-3">
     <label>Upload Product Images</label>
     <input
       type="file"
@@ -75,17 +118,74 @@
       multiple
       class="form-control"
     />
-    <div *ngIf="pendingImageFiles.length" class="mt-2">
-      <small
-        >{{ pendingImageFiles.length }} image(s) selected, will upload after
-        product creation</small
+  </div>
+
+  <!-- Existing images -->
+  <div *ngIf="productImages.length" class="mt-2">
+    <label>Current Product Images:</label>
+    <div class="d-flex flex-wrap gap-2">
+      <div
+        class="position-relative"
+        *ngFor="let img of productImages; let i = index"
       >
+        <img
+          [src]="getImageUrl(img.url)"
+          class="img-thumbnail"
+          style="width: 70px; height: auto"
+        />
+        <button
+          type="button"
+          class="btn-close position-absolute top-0 end-0"
+          aria-label="Remove"
+          (click)="onRemoveImage(img.id, i)"
+        ></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Image Previews -->
+  <div *ngIf="imagePreviewUrls.length" class="mt-2">
+    <h6 class="text-muted">New Image Previews</h6>
+    <div class="d-flex flex-wrap gap-2">
+      <div
+        class="position-relative"
+        style="width: 70px"
+        *ngFor="let imgUrl of imagePreviewUrls; let i = index"
+      >
+        <img
+          [src]="imgUrl"
+          class="img-thumbnail w-100 p-1"
+          style="height: auto"
+        />
+        <button
+          type="button"
+          class="btn-close position-absolute"
+          style="top: 2px; right: 2px"
+          aria-label="Remove"
+          (click)="removeImagePreview(i)"
+        ></button>
+      </div>
     </div>
   </div>
 
   <!-- Submit -->
-  <button type="submit" class="btn btn-primary" [disabled]="loading">
+  <button type="submit" class="btn btn-primary mt-3" [disabled]="loading">
     <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
-    {{ loading ? "Processing..." : "Create Product" }}
+    {{
+      loading
+        ? "Processing..."
+        : productId
+        ? "Update Product"
+        : "Create Product"
+    }}
   </button>
+
+  <!-- Cancel -->
+  <a
+    type="button"
+    class="btn btn-outline-secondary mt-3 ms-2"
+    (click)="onCancel()"
+  >
+    Cancel
+  </a>
 </form>

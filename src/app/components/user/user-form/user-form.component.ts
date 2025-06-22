@@ -61,21 +61,19 @@ export class UserFormComponent implements OnInit {
       email: user.email,
       phone: user.phone,
       role: user.role,
+      password: '', // do not pre-fill password
       address: {
         street: user.address?.street || '',
         city: user.address?.city || '',
         country: user.address?.country || '',
       },
     });
-    // Do not patch password
   }
 
   onSubmit() {
     if (this.userForm.invalid) return;
 
     const formValue = this.userForm.value;
-
-    delete formValue.password;
 
     if (this.isEditMode) {
       this.userService.updateUser(this.userId!, formValue).subscribe({

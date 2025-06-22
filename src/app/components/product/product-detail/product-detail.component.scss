@@ -1,0 +1,39 @@
+img.img-thumbnail {
+  object-fit: cover;
+}
+
+img.img-fluid {
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.table-borderless th {
+  width: 150px;
+}
+
+ul.list-group {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.list-group {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.img-fluid {
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

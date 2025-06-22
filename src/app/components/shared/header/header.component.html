@@ -1,4 +1,21 @@
-<header class="header">
-  <span class="title">Admin Dashboard</span>
-  <button (click)="logout()">Logout</button>
-</header>
+<nav class="navbar">
+  <div class="navbar-header">
+    <div class="navbar-logo">Bekdash</div>
+    <button class="hamburger" (click)="toggleMenu()">&#9776;</button>
+  </div>
+
+  <ul class="navbar-menu" [class.open]="menuOpen">
+    <li class="dropdown" *ngFor="let item of menuItems">
+      <button class="dropbtn">{{ item.label }}</button>
+      <div class="dropdown-content">
+        <a [routerLink]="item.addLink">Add</a>
+        <a [routerLink]="item.listLink">Show List</a>
+      </div>
+    </li>
+    <li class="logout-mobile">
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </li>
+  </ul>
+
+  <button class="logout-btn desktop-only" (click)="logout()">Logout</button>
+</nav>

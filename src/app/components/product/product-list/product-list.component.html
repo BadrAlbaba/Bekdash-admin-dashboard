@@ -15,6 +15,17 @@
     </div>
 
     <!-- Search + filters -->
+
+    <select
+      class="form-select form-select-sm w-auto"
+      [(ngModel)]="filters.active"
+      (change)="loadProducts()"
+    >
+      <option [ngValue]="undefined">All Statuses</option>
+      <option [ngValue]="true">Active</option>
+      <option [ngValue]="false">Inactive</option>
+    </select>
+
     <input
       type="text"
       class="form-control form-control-sm w-auto"
@@ -38,17 +49,6 @@
       (change)="loadProducts()"
     />
 
-    <ng-select
-      [items]="categories"
-      bindLabel="name"
-      bindValue="id"
-      [multiple]="true"
-      [(ngModel)]="filters.categoryIds"
-      placeholder="Select categories"
-      class="w-auto"
-      (change)="loadProducts()"
-    ></ng-select>
-
     <select
       class="form-select form-select-sm w-auto"
       [(ngModel)]="sortMode"
@@ -67,6 +67,17 @@
       <option value="DESC">Desc</option>
       <option value="ASC">Asc</option>
     </select>
+
+    <ng-select
+      [items]="categories"
+      bindLabel="name"
+      bindValue="id"
+      [multiple]="true"
+      [(ngModel)]="filters.categoryIds"
+      placeholder="Select categories"
+      class="form-control form-control-sm w-auto"
+      (change)="loadProducts()"
+    ></ng-select>
   </div>
 </div>
 
@@ -116,7 +127,7 @@
       <th>Orders</th>
       <th>Categories</th>
       <th>Thumbnail</th>
-      <th>Actions</th>
+      <th class="actions-th">Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -155,33 +166,57 @@
         <span *ngIf="!product.thumbnail" class="text-muted">No image</span>
       </td>
       <td>
+        <!-- View button -->
         <button
-          class="btn btn-sm btn-primary me-1 button-margin-top"
+          class="btn btn-sm btn-primary me-1"
           (click)="viewProduct(product.id)"
         >
           View
         </button>
-        <button
-          class="btn btn-sm btn-secondary me-1 button-margin-top"
-          (click)="editProduct(product.id)"
-        >
-          Edit
-        </button>
 
-        <button
-          class="btn btn-sm me-1 button-margin-top"
-          [ngClass]="product.active ? 'btn-warning' : 'btn-success'"
-          (click)="toggleActive(product)"
-        >
-          {{ product.active ? "Deactivate" : "Activate" }}
-        </button>
-
-        <button
-          class="btn btn-sm btn-danger me-1 button-margin-top"
-          (click)="deleteProduct(product.id)"
-        >
-          Delete
-        </button>
+        <!-- Dropdown for other actions -->
+        <div class="btn-group">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="bi bi-three-dots-vertical"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" (click)="editProduct(product.id)">
+                <i class="bi bi-pencil-square me-1"></i> Edit
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                [ngClass]="product.active ? 'text-warning' : 'text-success'"
+                (click)="toggleActive(product)"
+              >
+                <i
+                  class="bi"
+                  [ngClass]="
+                    product.active
+                      ? 'bi-x-circle text-warning'
+                      : 'bi-check-circle text-success'
+                  "
+                ></i>
+                {{ product.active ? "Deactivate" : "Activate" }}
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item text-danger"
+                (click)="deleteProduct(product)"
+              >
+                <i class="bi bi-trash me-1"></i> Delete
+              </a>
+            </li>
+          </ul>
+        </div>
       </td>
     </tr>
   </tbody>

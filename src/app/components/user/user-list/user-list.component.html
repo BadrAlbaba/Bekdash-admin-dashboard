@@ -53,19 +53,30 @@
         <button class="btn btn-sm btn-primary me-1" (click)="viewUser(user.id)">
           View
         </button>
-        <button
-          class="btn btn-sm btn-secondary me-1"
-          (click)="editUser(user.id)"
-        >
-          Edit
-        </button>
-        <button
-          class="btn btn-sm btn-danger"
-          [disabled]="user.id === currentUserId"
-          (click)="onDelete(user)"
-        >
-          Delete
-        </button>
+
+        <!-- Dropdown for other actions -->
+        <div class="btn-group">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="bi bi-three-dots-vertical"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" (click)="editUser(user.id)">
+                <i class="bi bi-pencil-square me-1"></i> Edit
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item text-danger" (click)="onDelete(user)">
+                <i class="bi bi-trash me-1"></i> Delete
+              </a>
+            </li>
+          </ul>
+        </div>
       </td>
     </tr>
   </tbody>

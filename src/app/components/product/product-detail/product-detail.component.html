@@ -1,1 +1,192 @@
-<p>product-detail works!</p>
+<h3 class="mb-4 text-center">{{ product.title }}</h3>
+
+<div class="row">
+  <!-- Thumbnail + gallery -->
+  <div class="col-md-4">
+    <img
+      *ngIf="product.thumbnail"
+      [src]="getThumbnailUrl(product.thumbnail)"
+      class="img-fluid rounded border mb-2"
+      alt="Product Thumbnail"
+    />
+    <div *ngIf="!product.thumbnail" class="text-muted mb-2">No thumbnail</div>
+
+    <div class="d-flex flex-wrap gap-2">
+      <img
+        *ngFor="let img of product.images; let i = index"
+        [src]="getThumbnailUrl(img.url)"
+        class="img-thumbnail"
+        style="width: 70px; height: 70px; cursor: pointer"
+        alt="Product Image"
+        (click)="openLightbox(i)"
+      />
+    </div>
+  </div>
+
+  <!-- Details -->
+  <div class="col-md-8">
+    <div class="row">
+      <div class="p-3 bg-light rounded shadow-sm">
+        <h5 class="mb-3 border-bottom pb-2">Product Details</h5>
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">Title:</div>
+          <div class="col-sm-8">{{ product.title }}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">Price:</div>
+          <div class="col-sm-8">{{ product.price | currency }}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">Stock:</div>
+          <div class="col-sm-8">{{ product.stock }}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">Rating:</div>
+          <div class="col-sm-8">{{ product.averageRating }}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">Active:</div>
+          <div class="col-sm-8">
+            <span
+              class="badge"
+              [ngClass]="product.active ? 'bg-success' : 'bg-danger'"
+            >
+              {{ product.active ? "Active" : "Inactive" }}
+            </span>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">Categories:</div>
+          <div class="col-sm-8">
+            <span
+              *ngFor="let cat of product.categories"
+              class="badge bg-secondary me-1"
+            >
+              {{ cat.name }}
+            </span>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">Reviews:</div>
+          <div class="col-sm-8">{{ product.reviewCount }}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">Orders:</div>
+          <div class="col-sm-8">{{ product.orderCount }}</div>
+        </div>
+
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">Seller:</div>
+          <div class="col-sm-8">{{ product.seller?.user?.name }}</div>
+        </div>
+        <div class="row mb-2" *ngIf="product.discount">
+          <div class="col-sm-4 text-muted">Discount:</div>
+          <div class="col-sm-8">
+            {{ product.discount.percentage }}% until
+            {{ product.discount.validUntil | date }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <!-- Description -->
+      <div class="mt-4 p-3 bg-white rounded shadow-sm border">
+        <h5 class="border-bottom pb-2 mb-2">Description</h5>
+        <p class="text-muted mb-0" [innerHTML]="product.description"></p>
+      </div>
+    </div>
+    <div class="row">
+      <!-- Actions -->
+      <div class="mt-4 p-3 d-flex justify-content-center gap-2">
+        <button
+          class="btn btn-outline-secondary d-flex align-items-center gap-1"
+          (click)="editProduct()"
+        >
+          <i class="bi bi-pencil-square"></i> Edit
+        </button>
+
+        <button
+          class="btn btn-outline-danger d-flex align-items-center gap-1"
+          (click)="deleteProduct()"
+        >
+          <i class="bi bi-trash"></i> Delete
+        </button>
+
+        <button
+          class="btn"
+          [ngClass]="product.active ? 'btn-warning' : 'btn-success'"
+          (click)="toggleActive()"
+        >
+          <i
+            class="bi"
+            [ngClass]="product.active ? 'bi-x-circle' : 'bi-check-circle'"
+          ></i>
+          {{ product.active ? "Deactivate" : "Activate" }}
+        </button>
+
+        <button
+          class="btn btn-outline-primary d-flex align-items-center gap-1"
+          (click)="viewOrders()"
+        >
+          <i class="bi bi-box-seam"></i> View Orders
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reviews -->
+<div *ngIf="product.reviews?.length > 0" class="mt-4">
+  <h5 class="border-bottom pb-2 mb-3">
+    Reviews ({{ product.reviews.length }})
+  </h5>
+  <ul class="list-group">
+    <li *ngFor="let review of product.reviews" class="list-group-item">
+      <strong>{{ review.user?.user?.name }}:</strong>
+      <span class="text-warning">★ {{ review.rating }}</span>
+      <p class="mb-0">{{ review.comment }}</p>
+    </li>
+  </ul>
+</div>
+
+<div *ngIf="!loading && !product" class="alert alert-warning">
+  Product not found.
+</div>
+
+<!-- Lightbox modal -->
+
+<div
+  class="modal fade show d-block"
+  tabindex="-1"
+  role="dialog"
+  *ngIf="lightboxOpen"
+  (click)="closeLightbox()"
+  style="background-color: rgba(0, 0, 0, 0.8)"
+>
+  <button
+    class="btn btn-light position-absolute top-0 end-0 m-3"
+    (click)="closeLightbox(); $event.stopPropagation()"
+  >
+    ×
+  </button>
+  <div class="d-flex justify-content-center align-items-center h-100">
+    <img
+      [src]="getThumbnailUrl(product.images[currentImageIndex].url)"
+      class="img-fluid fade-in"
+      style="max-height: 80vh"
+      (click)="$event.stopPropagation()"
+    />
+  </div>
+  <button
+    class="btn btn-light position-absolute top-50 start-0 translate-middle-y"
+    (click)="prevImage($event)"
+  >
+    ‹
+  </button>
+  <button
+    class="btn btn-light position-absolute top-50 end-0 translate-middle-y"
+    (click)="nextImage($event)"
+  >
+    ›
+  </button>
+</div>

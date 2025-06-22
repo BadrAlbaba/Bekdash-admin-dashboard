@@ -40,3 +40,24 @@
   margin-right: 4px;
   font-size: 0.875rem;
 }
+::ng-deep .quill-custom .ql-container {
+  border: none;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+::ng-deep .quill-custom {
+  border: 1px solid #ced4da; // same as .form-control border
+  border-radius: 0.375rem; // same as Bootstrap input radius
+  min-height: 200px;
+}
+
+::ng-deep .quill-custom .ql-toolbar {
+  border: none;
+  background: #f8f9fa; // light background for toolbar
+  border-bottom: 1px solid #ced4da;
+  border-radius: 0.375rem 0.375rem 0 0;
+}
+::ng-deep .quill-custom .ql-align {
+  min-width: 30px; /* makes buttons look neat */
+}

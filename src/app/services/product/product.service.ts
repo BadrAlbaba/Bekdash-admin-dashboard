@@ -11,6 +11,66 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
+  getProduct(productId: string): Observable<any> {
+    const query = `
+    query ($id: ID!) {
+      getProduct(id: $id) {
+        id
+        title
+        description
+        price
+        stock
+        averageRating
+        active
+        thumbnail
+        reviewCount
+        orderCount
+        seller {
+          user {
+            name
+          }
+        }
+        categories {
+          id
+          name
+        }
+        images {
+          url
+          id
+        }
+        discount {
+          percentage
+          validUntil
+        }
+        reviews {
+          rating
+          comment
+          user {
+            user {
+              name
+            }
+          }
+        }
+      }
+    }
+  `;
+
+    return this.http
+      .post<any>(this.GRAPHQL_API, {
+        query,
+        variables: { id: productId },
+      })
+      .pipe(
+        map((res) => {
+          if (res.errors) throw new Error(res.errors[0].message);
+          return res.data.getProduct;
+        }),
+        catchError((err) => {
+          throw err;
+        })
+      );
+  }
+
   addProduct(productData: any): Observable<any> {
     const query = `
       mutation ($input: ProductCreateInput!) {
@@ -148,7 +208,13 @@ export class ProductService {
     take: number
   ): Observable<any> {
     const query = `
-      query($filter: ProductFilterInput, $sortBy: ProductSortField, $order: SortOrder, $skip: Int, $take: Int) {
+      query(
+        $filter: ProductFilterInput,
+        $sortBy: ProductSortField,
+        $order: SortOrder,
+        $skip: Int,
+        $take: Int
+      ) {
         listProducts(filter: $filter, sortBy: $sortBy, order: $order, skip: $skip, take: $take) {
           items {
             id

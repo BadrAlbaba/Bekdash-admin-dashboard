@@ -9,6 +9,7 @@ import { FormsModule, NgModel } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { environment } from '../../../../enviroments/environment';
 import { UserStateService } from '../../../services/auth/user-state.service';
+import { ConfirmationService } from '../../../services/confirmation/confirmation.service';
 
 @Component({
   selector: 'app-product-list',
@@ -41,7 +42,8 @@ export class ProductListComponent implements OnInit {
     private categoryService: CategoryService,
     private toastService: ToastService,
     private router: Router,
-    private userService: UserStateService
+    private userService: UserStateService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -138,7 +140,7 @@ export class ProductListComponent implements OnInit {
             `Product ${newStatus ? 'activated' : 'deactivated'}`,
             'success'
           );
-          this.loadProducts();
+          product.active = newStatus;
         },
         error: (err) => {
           this.toastService.show(`Update failed: ${err.message}`, 'error');
@@ -147,25 +149,35 @@ export class ProductListComponent implements OnInit {
   }
 
   viewProduct(id: string): void {
-    this.router.navigate(['/admin/products', id, 'view']);
+    this.router.navigate(['/dashboard/products', id]);
   }
 
   editProduct(id: string): void {
-    this.router.navigate(['/admin/products', id, 'edit']);
+    this.router.navigate(['/dashboard/products', 'edit', id]);
   }
 
-  deleteProduct(id: string): void {
-    if (confirm('Are you sure you want to delete this product?')) {
-      this.productService.deleteProduct(id).subscribe({
-        next: () => {
-          this.toastService.show('Product deleted', 'success');
-          this.loadProducts();
-        },
-        error: (err) => {
-          this.toastService.show(`Delete failed: ${err.message}`, 'error');
-        },
+  deleteProduct(product: any): void {
+    this.confirmationService
+      .confirm(
+        'Delete User',
+        `Are you sure you want to delete ${product.title}?`
+      )
+      .then((confirmed) => {
+        if (!confirmed) return;
+
+        this.productService.deleteProduct(product.id).subscribe({
+          next: () => {
+            this.toastService.show('Product deleted successfully', 'success');
+            this.loadProducts();
+          },
+          error: (err) => {
+            this.toastService.show(
+              `Error deleting product: ${err.message}`,
+              'error'
+            );
+          },
+        });
       });
-    }
   }
 
   getThumbnailUrl(path: string): string {

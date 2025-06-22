@@ -11,6 +11,7 @@ import { CategoryFormComponent } from './components/category/category-form/categ
 import { UserFormComponent } from './components/user/user-form/user-form.component';
 import { UserDetailComponent } from './components/user/user-detail/user-detail.component';
 import { ProductFormComponent } from './components/product/product-form/product-form.component';
+import { ProductDetailComponent } from './components/product/product-detail/product-detail.component';
 
 export const routes: Routes = [
   {
@@ -59,6 +60,20 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: { roles: ['ADMIN', 'SELLER'] },
       },
+      {
+        path: 'products/:id',
+        loadComponent: () => ProductDetailComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN', 'SELLER'] },
+      },
+
+      {
+        path: 'products/edit/:id',
+        loadComponent: () => ProductFormComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN', 'SELLER'] },
+      },
+
       {
         path: 'orders',
         loadComponent: () => OrderListComponent,

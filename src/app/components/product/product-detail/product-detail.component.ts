@@ -1,11 +1,148 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ProductService } from '../../../services/product/product.service';
+import { ToastService } from '../../../services/toast/toast.service';
+import { environment } from '../../../../enviroments/environment';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-product-detail',
-  imports: [],
   templateUrl: './product-detail.component.html',
-  styleUrl: './product-detail.component.scss'
+  imports: [CommonModule],
+  styleUrls: ['./product-detail.component.scss'],
 })
-export class ProductDetailComponent {
+export class ProductDetailComponent implements OnInit {
+  product: any = null;
+  loading = false;
+  private readonly SERVER_URL = environment.SERVER_URL;
+  lightboxOpen = false;
+  currentImageIndex = 0;
 
+  constructor(
+    private route: ActivatedRoute,
+    private productService: ProductService,
+    private toastService: ToastService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    const productId = this.route.snapshot.paramMap.get('id');
+    if (productId) {
+      this.loadProduct(productId);
+    } else {
+      this.toastService.show('Product ID not found in URL', 'error');
+    }
+  }
+
+  loadProduct(id: string): void {
+    this.loading = true;
+    this.productService.getProduct(id).subscribe({
+      next: (prod) => {
+        this.product = prod;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.toastService.show(
+          `Failed to load product: ${err.message}`,
+          'error'
+        );
+        this.loading = false;
+      },
+    });
+  }
+
+  getThumbnailUrl(path: string): string {
+    return `${this.SERVER_URL}${path}`;
+  }
+
+  editProduct(): void {
+    if (this.product) {
+      this.router.navigate(['/dashboard/products/edit', this.product.id]);
+    }
+  }
+
+  deleteProduct(): void {
+    if (
+      this.product &&
+      confirm('Are you sure you want to delete this product?')
+    ) {
+      this.productService.deleteProduct(this.product.id).subscribe({
+        next: () => {
+          this.toastService.show('Product deleted', 'success');
+          this.router.navigate(['/admin/products']);
+        },
+        error: (err) => {
+          this.toastService.show(`Delete failed: ${err.message}`, 'error');
+        },
+      });
+    }
+  }
+
+  toggleActive(): void {
+    if (!this.product) return;
+    const newStatus = !this.product.active;
+    this.productService
+      .updateProduct(this.product.id, { active: newStatus })
+      .subscribe({
+        next: () => {
+          this.toastService.show(
+            `Product ${newStatus ? 'activated' : 'deactivated'}`,
+            'success'
+          );
+          this.loadProduct(this.product.id);
+        },
+        error: (err) => {
+          this.toastService.show(`Update failed: ${err.message}`, 'error');
+        },
+      });
+  }
+
+  openLightbox(index: number): void {
+    this.currentImageIndex = index;
+    this.lightboxOpen = true;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  closeLightbox(): void {
+    this.lightboxOpen = false;
+    document.body.style.overflow = '';
+    window.removeEventListener('keydown', this.handleKeyDown);
+  }
+
+  prevImage(event: Event): void {
+    event.stopPropagation();
+    this.currentImageIndex =
+      (this.currentImageIndex - 1 + this.product.images.length) %
+      this.product.images.length;
+  }
+
+  nextImage(event: Event): void {
+    event.stopPropagation();
+    this.currentImageIndex =
+      (this.currentImageIndex + 1) % this.product.images.length;
+  }
+
+  handleKeyDown = (event: KeyboardEvent): void => {
+    if (!this.lightboxOpen) return;
+
+    switch (event.key) {
+      case 'ArrowLeft':
+        this.prevImage(event);
+        break;
+      case 'ArrowRight':
+        this.nextImage(event);
+        break;
+      case 'Escape':
+        this.closeLightbox();
+        break;
+    }
+  };
+
+  viewOrders(): void {
+    // Navigate to a route or open modal — adapt as needed
+    this.router.navigate(['/admin/orders'], {
+      queryParams: { productId: this.product.id },
+    });
+  }
 }

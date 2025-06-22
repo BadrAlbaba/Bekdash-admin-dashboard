@@ -37,12 +37,29 @@
         <button class="btn btn-sm btn-primary me-1" (click)="onView(cat.id)">
           View
         </button>
-        <button class="btn btn-sm btn-secondary me-1" (click)="onEdit(cat.id)">
-          Edit
-        </button>
-        <button class="btn btn-sm btn-danger" (click)="onDelete(cat)">
-          Delete
-        </button>
+        <!-- Dropdown for other actions -->
+        <div class="btn-group">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="bi bi-three-dots-vertical"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" (click)="onEdit(cat.id)">
+                <i class="bi bi-pencil-square me-1"></i> Edit
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item text-danger" (click)="onDelete(cat)">
+                <i class="bi bi-trash me-1"></i> Delete
+              </a>
+            </li>
+          </ul>
+        </div>
       </td>
     </tr>
   </tbody>

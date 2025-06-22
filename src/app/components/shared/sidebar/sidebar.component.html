@@ -24,7 +24,10 @@
             >
           </li>
           <li>
-            <a routerLink="/dashboard/products/new" routerLinkActive="active"
+            <a
+              routerLink="/dashboard/products/new"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
               >Add Product</a
             >
           </li>
