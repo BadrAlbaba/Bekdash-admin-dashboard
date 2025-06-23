@@ -40,6 +40,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
   pendingImageFiles: File[] = [];
   pendingThumbnailFile: File | null = null;
   productThumbnail: string = '';
+  lastValidCategories: any[] = [];
 
   thumbnailPreviewUrl: string | null = null;
   imagePreviewUrls: string[] = [];
@@ -51,9 +52,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
       [{ list: 'ordered' }, { list: 'bullet' }],
       [{ align: [] }],
       [{ direction: 'rtl' }],
-      ['blockquote'],
       [{ size: ['small', false, 'large', 'huge'] }],
-      [{ color: [] }, { background: [] }],
       ['clean'],
     ],
   };
@@ -72,6 +71,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.productId = this.route.snapshot.paramMap.get('id') || '';
     this.initForm();
+    this.lastValidCategories = this.productForm.get('categoryIds')?.value || [];
     this.loadCategories();
 
     if (this.productId) {
@@ -116,6 +116,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
         });
         this.productImages = product.images || [];
         this.productThumbnail = product.thumbnail || '';
+        this.updateCategoryDisabledState();
         this.loading = false;
       },
       error: (err) => {
@@ -126,6 +127,19 @@ export class ProductFormComponent implements OnInit, OnDestroy {
         this.loading = false;
       },
     });
+  }
+
+  get categoryLimitReached(): boolean {
+    return this.productForm?.get('categoryIds')?.value?.length >= 3;
+  }
+
+  updateCategoryDisabledState(): void {
+    const selected = this.productForm.get('categoryIds')?.value || [];
+
+    this.categories = this.categories.map((cat) => ({
+      ...cat,
+      disabled: selected.length >= 3 && !selected.includes(cat.id),
+    }));
   }
 
   onThumbnailSelected(event: Event): void {

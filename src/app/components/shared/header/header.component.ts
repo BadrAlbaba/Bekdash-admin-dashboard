@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
+import { UserStateService } from '../../../services/auth/user-state.service';
 
 @Component({
   selector: 'app-header',
@@ -35,7 +36,13 @@ export class HeaderComponent {
     },
   ];
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private userService: UserStateService
+  ) {
+    this.filterMenuItems();
+  }
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
@@ -44,5 +51,15 @@ export class HeaderComponent {
   logout() {
     this.router.navigate(['/login']);
     this.authService.logout();
+  }
+  filterMenuItems() {
+    const role = this.userService.getRole();
+    // Assuming userService has a getCurrentUser() returning the logged-in user object
+
+    if (role === 'SELLER') {
+      this.menuItems = this.menuItems.filter(
+        (item) => item.label !== 'Categories' && item.label !== 'Users'
+      );
+    }
   }
 }

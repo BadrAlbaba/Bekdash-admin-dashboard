@@ -285,4 +285,33 @@ export class ProductService {
         })
       );
   }
+
+  listSellers(): Observable<any> {
+    const query = {
+      query: `
+        query {
+          listSellers {
+            id
+            user {
+              id
+              name
+              email
+              role
+            }
+          }
+        }
+      `,
+    };
+
+    return this.http.post<any>(this.GRAPHQL_API, query).pipe(
+      map((res) => {
+        if (res.errors) throw new Error(res.errors[0].message);
+        console.log(res);
+        return res;
+      }),
+      catchError((err) => {
+        throw err;
+      })
+    );
+  }
 }

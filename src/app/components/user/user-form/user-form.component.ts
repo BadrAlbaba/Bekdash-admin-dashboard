@@ -21,6 +21,7 @@ export class UserFormComponent implements OnInit {
   isEditMode = false;
   userId: string | null = null;
   roles = ['CUSTOMER', 'SELLER', 'ADMIN'];
+  showPassword = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -74,8 +75,8 @@ export class UserFormComponent implements OnInit {
     if (this.userForm.invalid) return;
 
     const formValue = this.userForm.value;
-
     if (this.isEditMode) {
+      if (!formValue.password) delete formValue.password;
       this.userService.updateUser(this.userId!, formValue).subscribe({
         next: () => {
           this.toast.show('User updated successfully', 'success');

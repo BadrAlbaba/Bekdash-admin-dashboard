@@ -4,6 +4,7 @@ import { ProductService } from '../../../services/product/product.service';
 import { ToastService } from '../../../services/toast/toast.service';
 import { environment } from '../../../../enviroments/environment';
 import { CommonModule } from '@angular/common';
+import { ConfirmationService } from '../../../services/confirmation/confirmation.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -12,7 +13,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./product-detail.component.scss'],
 })
 export class ProductDetailComponent implements OnInit {
-  product: any = null;
+  product: any = '';
   loading = false;
   private readonly SERVER_URL = environment.SERVER_URL;
   lightboxOpen = false;
@@ -22,7 +23,8 @@ export class ProductDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private productService: ProductService,
     private toastService: ToastService,
-    private router: Router
+    private router: Router,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -62,20 +64,27 @@ export class ProductDetailComponent implements OnInit {
   }
 
   deleteProduct(): void {
-    if (
-      this.product &&
-      confirm('Are you sure you want to delete this product?')
-    ) {
-      this.productService.deleteProduct(this.product.id).subscribe({
-        next: () => {
-          this.toastService.show('Product deleted', 'success');
-          this.router.navigate(['/admin/products']);
-        },
-        error: (err) => {
-          this.toastService.show(`Delete failed: ${err.message}`, 'error');
-        },
+    this.confirmationService
+      .confirm(
+        'Delete User',
+        `Are you sure you want to delete ${this.product.title}?`
+      )
+      .then((confirmed) => {
+        if (!confirmed) return;
+
+        this.productService.deleteProduct(this.product.id).subscribe({
+          next: () => {
+            this.toastService.show('Product deleted successfully', 'success');
+            this.router.navigate(['/dashboard/products']);
+          },
+          error: (err) => {
+            this.toastService.show(
+              `Error deleting product: ${err.message}`,
+              'error'
+            );
+          },
+        });
       });
-    }
   }
 
   toggleActive(): void {
@@ -144,5 +153,9 @@ export class ProductDetailComponent implements OnInit {
     this.router.navigate(['/admin/orders'], {
       queryParams: { productId: this.product.id },
     });
+  }
+
+  onBack(): void {
+    this.router.navigate(['/dashboard/products']);
   }
 }

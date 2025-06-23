@@ -1,4 +1,6 @@
-<h4 class="mb-4">{{ productId ? "Edit Product" : "Add Product" }}</h4>
+<h4 class="mb-4 mt-2 text-center title">
+  {{ productId ? "Edit Product" : "Add Product" }}
+</h4>
 
 <form
   [formGroup]="productForm"
@@ -37,7 +39,9 @@
 
   <!-- Categories -->
   <div class="mb-3">
-    <label>Categories</label>
+    <label
+      >Categories <span class="text-muted">(maximum 3 categories)</span></label
+    >
     <ng-select
       [items]="categories"
       bindLabel="name"
@@ -47,7 +51,12 @@
       [closeOnSelect]="false"
       placeholder="Select categories"
       class="form-control"
-    ></ng-select>
+      (change)="updateCategoryDisabledState()"
+    >
+    </ng-select>
+    <small class="text-danger" *ngIf="categoryLimitReached">
+      You have reached the maximum of 3 categories.
+    </small>
   </div>
 
   <!-- Active -->

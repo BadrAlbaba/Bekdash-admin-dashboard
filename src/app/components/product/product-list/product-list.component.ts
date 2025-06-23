@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../../services/product/product.service';
 import { CategoryService } from '../../../services/category/category.service';
 import { ToastService } from '../../../services/toast/toast.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, debounceTime } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgModel } from '@angular/forms';
@@ -25,9 +25,11 @@ export class ProductListComponent implements OnInit {
 
   products: any[] = [];
   categories: any[] = [];
-  filters: any = { categoryIds: [] };
+  filters: any = { categoryIds: [], sellerId: undefined };
   sortMode = 'CREATED_AT';
   sortOrder = 'DESC';
+  sellers: any[] = [];
+
   loading = false;
 
   page = 1;
@@ -43,14 +45,22 @@ export class ProductListComponent implements OnInit {
     private toastService: ToastService,
     private router: Router,
     private userService: UserStateService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.userService.getRole() === 'ADMIN';
     if (this.isAdmin) {
       this.listMode = 'ALL';
+      this.loadSellers();
     }
+
+    this.route.queryParams.subscribe((params) => {
+      const categoryId = params['category'];
+      if (categoryId) this.filters.categoryIds = [categoryId];
+    });
+
     this.loadCategories();
     this.loadProducts();
 
@@ -58,6 +68,24 @@ export class ProductListComponent implements OnInit {
       this.filters.titleContains = value;
       this.page = 1;
       this.loadProducts();
+    });
+  }
+
+  loadSellers(): void {
+    this.productService.listSellers().subscribe({
+      next: (res) => {
+        this.sellers = res.data.listSellers.map((s: any) => ({
+          id: s.id, // or s.user.id if you want user id
+          name: s.user.name, // flatten name for ng-select
+          email: s.user.email, // optional
+        }));
+      },
+      error: (err) => {
+        this.toastService.show(
+          `Failed to load sellers: ${err.message}`,
+          'error'
+        );
+      },
     });
   }
 

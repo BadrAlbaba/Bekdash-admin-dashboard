@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CategoryService } from '../../../services/category/category.service';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../../../services/toast/toast.service';
 import { ConfirmationService } from '../../../services/confirmation/confirmation.service';
+import { environment } from '../../../../enviroments/environment';
 
 @Component({
   selector: 'app-category-list',
@@ -18,7 +19,8 @@ export class CategoryListComponent implements OnInit {
   constructor(
     private categoryService: CategoryService,
     private toastService: ToastService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -79,11 +81,15 @@ export class CategoryListComponent implements OnInit {
   }
 
   onView(categoryId: string) {
-    //TODO: Implement view logic
+    this.router.navigate(['/dashboard/categories', categoryId]);
   }
 
   onEdit(categoryId: string) {
-    // Navigate or open modal...
+    this.router.navigate(['/dashboard/categories/edit', categoryId]);
+  }
+
+  getImageUrl(path: string): string {
+    return `${environment.SERVER_URL}${path}`;
   }
 
   onDelete(category: any) {

@@ -1,4 +1,4 @@
-<h4 class="mb-4">{{ isEditMode ? "Edit User" : "Create User" }}</h4>
+<h4 class="mb-4 mt-2 title">{{ isEditMode ? "Edit User" : "Create User" }}</h4>
 
 <form
   [formGroup]="userForm"
@@ -17,10 +17,24 @@
     <label>Phone</label>
     <input formControlName="phone" type="text" class="form-control" />
   </div>
-  <div class="mb-3" *ngIf="!isEditMode">
+  <div class="mb-3">
     <label>Password</label>
-    <input formControlName="password" type="password" class="form-control" />
+    <div class="input-group">
+      <input
+        [type]="showPassword ? 'text' : 'password'"
+        formControlName="password"
+        class="form-control"
+      />
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="showPassword = !showPassword"
+      >
+        {{ showPassword ? "Hide" : "Show" }}
+      </button>
+    </div>
   </div>
+
   <fieldset class="border p-3 rounded mb-3">
     <legend class="float-none w-auto px-2">Address</legend>
 

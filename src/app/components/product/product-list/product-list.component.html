@@ -1,4 +1,4 @@
-<h4 class="mb-4">Product List</h4>
+<h4 class="mb-4 mt-2 text-center title">Products List</h4>
 
 <div class="bg-light p-3 rounded shadow-sm mb-3">
   <div class="d-flex flex-wrap align-items-center gap-2">
@@ -75,6 +75,18 @@
       [multiple]="true"
       [(ngModel)]="filters.categoryIds"
       placeholder="Select categories"
+      class="form-control form-control-sm w-auto"
+      (change)="loadProducts()"
+    ></ng-select>
+
+    <ng-select
+      *ngIf="isAdmin"
+      [items]="sellers"
+      bindLabel="name"
+      bindValue="id"
+      [multiple]="true"
+      [(ngModel)]="filters.sellerIds"
+      placeholder="Select sellers"
       class="form-control form-control-sm w-auto"
       (change)="loadProducts()"
     ></ng-select>

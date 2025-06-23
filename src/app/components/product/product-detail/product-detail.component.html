@@ -1,4 +1,4 @@
-<h3 class="mb-4 text-center">{{ product.title }}</h3>
+<h3 class="mb-4 mt-2 text-center title">{{ product.title }}</h3>
 
 <div class="row">
   <!-- Thumbnail + gallery -->
@@ -129,6 +129,13 @@
           (click)="viewOrders()"
         >
           <i class="bi bi-box-seam"></i> View Orders
+        </button>
+
+        <button
+          class="btn btn-outline-secondary d-flex align-items-center"
+          (click)="onBack()"
+        >
+          <i class="bi bi-arrow-left me-1"></i> Back
         </button>
       </div>
     </div>

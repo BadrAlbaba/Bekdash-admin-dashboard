@@ -38,49 +38,10 @@
   <p>
     <strong>Verified:</strong> {{ user.customer.isVerified ? "Yes" : "No" }}
   </p>
-  <p><strong>Orders:</strong> {{ user.customer._count.orders }}</p>
-  <p><strong>Reviews:</strong> {{ user.customer._count.reviews }}</p>
-  <p><strong>Wishlist items:</strong> {{ user.customer._count.wishlist }}</p>
-  <p><strong>Basket items:</strong> {{ user.customer._count.basket }}</p>
-</div>
-
-<div *ngIf="user?.seller" class="mt-4">
-  <h5>Seller Info</h5>
-  <p><strong>Products:</strong> {{ user.seller._count.products }}</p>
-</div>
-
-<div *ngIf="user?.customer?.orders?.length" class="mt-4">
-  <h5>Recent Orders</h5>
-  <table class="table table-sm table-bordered">
-    <thead>
-      <tr>
-        <th>Order ID</th>
-        <th>Date</th>
-        <th>Items</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let order of user.customer.orders">
-        <td>
-          <a [routerLink]="['/dashboard/orders', order.id]"
-            >{{ order.id | slice : 0 : 8 }}...</a
-          >
-        </td>
-        <td>{{ order.createdAt | date : "short" }}</td>
-        <td>
-          <ul class="mb-0 ps-3">
-            <li *ngFor="let item of order.items">
-              {{ item.product.title }} (x{{ item.quantity }})
-            </li>
-          </ul>
-        </td>
-        <td>
-          {{ getOrderTotal(order) | currency }}
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <p><strong>Orders:</strong> {{ user.customer.orderCount }}</p>
+  <p><strong>Reviews:</strong> {{ user.customer.reviewCount }}</p>
+  <p><strong>Wishlist items:</strong> {{ user.customer.wishlistCount }}</p>
+  <p><strong>Basket items:</strong> {{ user.customer.basketCount }}</p>
 </div>
 
 <div *ngIf="user?.seller?.products?.length" class="mt-4">

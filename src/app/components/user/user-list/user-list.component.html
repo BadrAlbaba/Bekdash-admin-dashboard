@@ -1,4 +1,4 @@
-<h4 class="mb-4">User List</h4>
+<h4 class="mb-4 mt-2 text-center title">Users List</h4>
 
 <div class="bg-light p-2 rounded shadow-sm mb-3">
   <div class="d-flex flex-wrap align-items-center gap-2">
@@ -35,7 +35,7 @@
       <th>Phone</th>
       <th>Role</th>
       <th (click)="onSort('createdAt')" style="cursor: pointer">Created</th>
-      <th style="width: 200px">Actions</th>
+      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -70,7 +70,7 @@
                 <i class="bi bi-pencil-square me-1"></i> Edit
               </a>
             </li>
-            <li>
+            <li *ngIf="user.id !== this.currentUserId">
               <a class="dropdown-item text-danger" (click)="onDelete(user)">
                 <i class="bi bi-trash me-1"></i> Delete
               </a>

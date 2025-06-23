@@ -11,6 +11,7 @@ import { UserStateService } from '../../../services/auth/user-state.service';
   selector: 'app-user-list',
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './user-list.component.html',
+  styleUrls: ['./user-list.component.scss'],
 })
 export class UserListComponent implements OnInit {
   users: any[] = [];
@@ -32,16 +33,7 @@ export class UserListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
-    this.userStateService.getId$().subscribe({
-      next: (id) => {
-        this.currentUserId = id || '';
-        this.loadUsers();
-      },
-      error: () => {
-        console.error('Could not load current user');
-        this.loadUsers();
-      },
-    });
+    this.currentUserId = this.userStateService.getId() || '';
   }
 
   loadUsers() {

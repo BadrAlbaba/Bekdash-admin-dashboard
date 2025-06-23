@@ -15,14 +15,18 @@ export class CategoryService {
 
   addCategory(
     name: string,
+    description: string,
     level: string,
-    parentId?: string
+    parentId?: string,
+    image?: string
   ): Observable<Category> {
     const query = `
       mutation AddCategory($input: CategoryInput!) {
         addCategory(input: $input) {
           id
           name
+          description
+          image
           level
           parent {
             id
@@ -32,7 +36,7 @@ export class CategoryService {
     `;
 
     const variables = {
-      input: { name, level, parentId },
+      input: { name, description, image, level, parentId },
     };
 
     return this.http
@@ -56,12 +60,49 @@ export class CategoryService {
       );
   }
 
+  getCategory(id: string): Observable<any> {
+    const query = `
+      query($id: ID!) {
+        getCategory(id: $id) {
+          id
+          name
+          level
+          description
+          image
+          createdAt
+          parent {
+            id
+            name
+          }
+          children {
+            id
+            name
+            level
+          }
+        }
+      }
+    `;
+
+    const variables = { id };
+
+    return this.http
+      .post<any>(this.GRAPHQL_API, {
+        query,
+        variables,
+      })
+      .pipe(
+        // Optional: Map the response data
+        map((res) => res.data.getCategory)
+      );
+  }
+
   listCategoriesByLevel(level: string) {
     const query = `
       query ($level: CategoryLevel) {
         listCategories(level: $level) {
           id
           name
+          image
         }
       }
     `;
@@ -82,17 +123,42 @@ export class CategoryService {
             listCategories(level: FIRST) {
                 id
                 name
+                image
                 children {
                 id
                 name
+                image
                 children {
                     id
                     name
+                    image
                 }
                 }
             }
             }
       `,
+      })
+      .pipe(map((res) => res.data.listCategories));
+  }
+
+  updateCategory(id: string, input: any) {
+    const mutation = `
+      mutation UpdateCategory($id: ID!, $input: CategoryInput!) {
+        updateCategory(id: $id, input: $input) {
+          id
+          name
+          description
+          level
+          image
+          parent { id name }
+          children { id name }
+        }
+      }
+    `;
+    return this.http
+      .post<any>(this.GRAPHQL_API, {
+        query: mutation,
+        variables: { id, input },
       })
       .pipe(map((res) => res.data.listCategories));
   }

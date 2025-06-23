@@ -1,3 +1,8 @@
+.title {
+  background-color: #ced4da3f;
+  padding: 10px 10px;
+}
+
 ::ng-deep .ng-select {
   font-size: 0.95rem;
 }
@@ -40,6 +45,7 @@
   margin-right: 4px;
   font-size: 0.875rem;
 }
+
 ::ng-deep .quill-custom .ql-container {
   border: none;
   font-family: inherit;
@@ -60,4 +66,11 @@
 }
 ::ng-deep .quill-custom .ql-align {
   min-width: 30px; /* makes buttons look neat */
+}
+
+::ng-deep .ng-option-disabled {
+  color: #999 !important; /* Gray out the text */
+  background-color: #f8f9fa !important; /* Light background */
+  cursor: not-allowed !important;
+  font-style: italic;
 }

@@ -110,22 +110,51 @@ export class UserService {
     return this.http
       .post<any>(this.GRAPHQL_API, {
         query: `
-      query ($id: ID!) {
-        getUser(id: $id) {
-          id
-          name
-          email
-          phone
-          role
-          createdAt
-          address {
-            street
-            city
-            country
+        query ($id: ID!) {
+  getUser(id: $id) {
+    id
+    name
+    email
+    phone
+    role
+    createdAt
+    address {
+      street
+      city
+      country
+    }
+    customer {
+      isVerified
+      orderCount
+      reviewCount
+      wishlistCount
+      basketCount
+      orders {
+        id
+        createdAt
+        items {
+          quantity
+          price
+          product {
+            title
           }
         }
       }
-    `,
+    }
+    seller {
+      productCount
+      products {
+        id
+        title
+        price
+        stock
+        active
+      }
+    }
+  }
+}
+
+      `,
         variables: { id },
       })
       .pipe(map((res) => res.data.getUser));

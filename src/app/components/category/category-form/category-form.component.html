@@ -5,23 +5,7 @@
 >
   <div class="mb-3">
     <label for="name" class="form-label">Category Name</label>
-    <input
-      id="name"
-      formControlName="name"
-      type="text"
-      class="form-control"
-      [class.is-invalid]="
-        categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched
-      "
-    />
-    <div
-      class="invalid-feedback"
-      *ngIf="
-        categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched
-      "
-    >
-      Name is required.
-    </div>
+    <input id="name" formControlName="name" class="form-control" />
   </div>
 
   <div class="mb-3">
@@ -33,15 +17,7 @@
 
   <div class="mb-3" *ngIf="categoryForm.get('level')?.value !== 'FIRST'">
     <label for="parentId" class="form-label">Parent Category</label>
-    <select
-      id="parentId"
-      formControlName="parentId"
-      class="form-select"
-      [class.is-invalid]="
-        categoryForm.get('parentId')?.invalid &&
-        categoryForm.get('parentId')?.touched
-      "
-    >
+    <select id="parentId" formControlName="parentId" class="form-select">
       <option [value]="''">-- Select Parent --</option>
       <option *ngFor="let cat of parentCategories" [value]="cat.id">
         {{ cat.name }}
@@ -49,11 +25,82 @@
     </select>
   </div>
 
-  <button
-    type="submit"
-    class="btn btn-success"
-    [disabled]="categoryForm.invalid"
-  >
-    Create Category
-  </button>
+  <!-- Description -->
+  <div class="mb-3">
+    <label class="form-label">Description</label>
+    <quill-editor
+      formControlName="description"
+      [styles]="{ height: '200px', width: '100%' }"
+      class="form-control quill-custom"
+      [modules]="quillModules"
+      placeholder="Write a description for this category..."
+    ></quill-editor>
+  </div>
+
+  <!-- Image Upload -->
+  <div class="mb-3">
+    <label class="form-label">Category Image</label>
+    <input
+      type="file"
+      class="form-control"
+      (change)="onThumbnailSelected($event)"
+    />
+  </div>
+
+  <!-- Existing image -->
+  <div *ngIf="existingImageUrl && !thumbnailPreviewUrl" class="mb-3">
+    <label class="form-label">Current Image</label>
+    <div class="position-relative" style="width: 120px">
+      <img
+        [src]="getImageUrl(existingImageUrl)"
+        class="img-thumbnail w-100 p-1"
+        style="height: auto"
+      />
+      <button
+        type="button"
+        class="btn-close position-absolute"
+        style="top: 2px; right: 2px"
+        aria-label="Remove"
+        (click)="removeExistingImage()"
+      ></button>
+    </div>
+  </div>
+
+  <!-- Preview -->
+  <div class="mb-3" *ngIf="thumbnailPreviewUrl">
+    <label class="form-label">Image Preview</label>
+    <div class="position-relative" style="width: 120px">
+      <img
+        [src]="thumbnailPreviewUrl"
+        class="img-thumbnail w-100 p-1"
+        style="height: auto"
+      />
+      <button
+        type="button"
+        class="btn-close position-absolute"
+        style="top: 2px; right: 2px"
+        aria-label="Remove"
+        (click)="removeThumbnail()"
+      ></button>
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <div class="gap-2 d-flex flex-wrap">
+    <button
+      type="submit"
+      class="btn btn-success"
+      [disabled]="categoryForm.invalid"
+    >
+      {{ categoryId ? "Update Category" : "Create Category" }}
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+  </div>
 </form>
