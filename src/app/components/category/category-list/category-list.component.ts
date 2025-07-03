@@ -10,7 +10,7 @@ import { environment } from '../../../../enviroments/environment';
   selector: 'app-category-list',
   imports: [RouterModule, CommonModule],
   templateUrl: './category-list.component.html',
-  styleUrl: './category-list.component.scss',
+  styleUrls: ['./category-list.component.scss', '../../../app.component.scss'],
 })
 export class CategoryListComponent implements OnInit {
   categories: any[] = [];
@@ -101,21 +101,20 @@ export class CategoryListComponent implements OnInit {
       .then((confirmed) => {
         if (!confirmed) return;
 
-        //TODO: Implement actual deletion logic
-        // this.categoryService.deleteCategory(category.id).subscribe({
-        //   next: () => {
-        //     this.flattenedCategories = this.flattenedCategories.filter(
-        //       (c) => c.id !== category.id && c.parentId !== category.id
-        //     );
-        //     this.toastService.show('Category deleted successfully', 'success');
-        //   },
-        //   error: (err) => {
-        //     this.toastService.show(
-        //       'Failed to delete category: ' + err.message,
-        //       'error'
-        //     );
-        //   },
-        // });
+        this.categoryService.deleteCategory(category.id).subscribe({
+          next: () => {
+            this.flattenedCategories = this.flattenedCategories.filter(
+              (c) => c.id !== category.id && c.parentId !== category.id
+            );
+            this.toastService.show('Category deleted successfully', 'success');
+          },
+          error: (err) => {
+            this.toastService.show(
+              'Failed to delete category: ' + err.message,
+              'error'
+            );
+          },
+        });
       });
   }
 }

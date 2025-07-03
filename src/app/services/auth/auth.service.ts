@@ -72,7 +72,7 @@ export class AuthService {
         }),
         switchMap(() => this.getMe()),
         tap((user) => {
-          if (user.role !== 'USER' && user.role !== 'ADMIN') {
+          if (user.role !== 'SELLER' && user.role !== 'ADMIN') {
             this.toastService.show(
               'Access denied: Invalid user role.',
               'error'
@@ -90,9 +90,11 @@ export class AuthService {
           });
         }),
         catchError((err) => {
-          //TODO handle specific error cases (Tosaster maybe?))
           this.accessToken = null;
-          console.error('Login error:', err.message);
+          this.toastService.show(
+            `Login failed: ${err.message || 'Unknown error'}`,
+            'error'
+          );
           return throwError(() => err);
         })
       );

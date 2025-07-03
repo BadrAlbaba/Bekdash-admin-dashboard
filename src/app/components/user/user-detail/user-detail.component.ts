@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserService } from '../../../services/user/user.service';
 import { CommonModule } from '@angular/common';
+import { ConfirmationService } from '../../../services/confirmation/confirmation.service';
+import { ToastService } from '../../../services/toast/toast.service';
 
 @Component({
   selector: 'app-user-detail',
@@ -15,7 +17,10 @@ export class UserDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router,
+    private confirmationService: ConfirmationService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -42,5 +47,54 @@ export class UserDetailComponent implements OnInit {
     return order.items.reduce((sum: number, item: any) => {
       return sum + item.price * item.quantity;
     }, 0);
+  }
+
+  onBack(): void {
+    this.router.navigate(['/dashboard/users']);
+  }
+
+  onSellerProducts(): void {
+    if (
+      this.user &&
+      (this.user.role === 'SELLER' || this.user.role === 'ADMIN')
+    ) {
+      this.router.navigate(['/dashboard/products'], {
+        queryParams: { sellerId: this.user.id },
+      });
+    } else {
+      this.error = 'User is not a seller';
+    }
+  }
+  onEdit(): void {
+    if (this.user) {
+      this.router.navigate(['/dashboard/users/edit', this.user.id]);
+    } else {
+      this.error = 'User not found';
+    }
+  }
+  onDelete(): void {
+    if (this.user) {
+      this.confirmationService
+        .confirm(
+          'Delete Category',
+          `Are you sure you want to delete "${this.user.name}" and its subcategories?`
+        )
+        .then((confirmed) => {
+          if (!confirmed) return;
+          this.userService.deleteUser(this.user.id).subscribe({
+            next: () => {
+              this.toastService.show('User deleted successfully', 'success');
+            },
+            error: (err) => {
+              this.toastService.show(
+                'Failed to delete user: ' + err.message,
+                'error'
+              );
+            },
+          });
+        });
+    } else {
+      this.error = 'User not found';
+    }
   }
 }

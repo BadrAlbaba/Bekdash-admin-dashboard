@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { CategoryService } from '../../../services/category/category.service';
 import { ToastService } from '../../../services/toast/toast.service';
 import { environment } from '../../../../enviroments/environment';
+import { ConfirmationService } from '../../../services/confirmation/confirmation.service';
 
 @Component({
   selector: 'app-category-detail',
@@ -19,7 +20,8 @@ export class CategoryDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private categoryService: CategoryService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -55,7 +57,7 @@ export class CategoryDetailComponent implements OnInit {
   }
 
   onEdit(): void {
-    this.router.navigate(['/dashboard/categories', this.category.id, 'edit']);
+    this.router.navigate(['/dashboard/categories/edit', this.category.id]);
   }
 
   viewProducts(): void {
@@ -65,6 +67,30 @@ export class CategoryDetailComponent implements OnInit {
   }
 
   onBack(): void {
-    this.router.navigate(['/dashboard/categories']);
+    window.history.back();
+  }
+
+  onDelete(): void {
+    this.confirmationService
+      .confirm(
+        'Delete Category',
+        `Are you sure you want to delete "${this.category.name}" and its subcategories?`
+      )
+      .then((confirmed) => {
+        if (!confirmed) return;
+
+        this.categoryService.deleteCategory(this.category.id).subscribe({
+          next: () => {
+            this.toastService.show('Category deleted successfully', 'success');
+            this.router.navigate(['/dashboard/categories']);
+          },
+          error: (err) => {
+            this.toastService.show(
+              'Failed to delete category: ' + err.message,
+              'error'
+            );
+          },
+        });
+      });
   }
 }

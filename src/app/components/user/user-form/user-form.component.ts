@@ -10,6 +10,7 @@ import { UserService } from '../../../services/user/user.service';
 import { ToastService } from '../../../services/toast/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { ConfirmationService } from '../../../services/confirmation/confirmation.service';
 
 @Component({
   selector: 'app-user-form',
@@ -28,7 +29,8 @@ export class UserFormComponent implements OnInit {
     private userService: UserService,
     private fb: FormBuilder,
     private toast: ToastService,
-    private router: Router
+    private router: Router,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -107,5 +109,21 @@ export class UserFormComponent implements OnInit {
 
   get addressForm(): FormGroup {
     return this.userForm.get('address') as FormGroup;
+  }
+
+  onCancel(): void {
+    if (this.userForm.dirty) {
+      this.confirmationService
+        .confirm(
+          'Cancel Changes',
+          'You have unsaved changes. Are you sure you want to cancel?'
+        )
+        .then((confirmed) => {
+          if (!confirmed) return;
+          window.history.back();
+        });
+    } else {
+      window.history.back();
+    }
   }
 }

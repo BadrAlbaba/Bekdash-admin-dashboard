@@ -11,7 +11,7 @@ import { UserStateService } from '../../../services/auth/user-state.service';
   selector: 'app-user-list',
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.scss'],
+  styleUrls: ['./user-list.component.scss', '../../../app.component.scss'],
 })
 export class UserListComponent implements OnInit {
   users: any[] = [];

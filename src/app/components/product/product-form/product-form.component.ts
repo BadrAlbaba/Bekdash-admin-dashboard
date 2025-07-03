@@ -349,10 +349,10 @@ export class ProductFormComponent implements OnInit, OnDestroy {
         )
         .then((confirmed) => {
           if (!confirmed) return;
-          this.router.navigate(['/dashboard/products']);
+          window.history.back();
         });
     } else {
-      this.router.navigate(['/dashboard/products']);
+      window.history.back();
     }
   }
 }

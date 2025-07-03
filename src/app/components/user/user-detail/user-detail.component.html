@@ -1,83 +1,85 @@
-<div *ngIf="loading" class="text-center py-4">
-  <div class="spinner-border text-primary"></div>
+<!-- Loading Spinner -->
+<div *ngIf="loading" class="text-center py-5">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
 </div>
 
-<div *ngIf="error" class="alert alert-danger">
+<!-- Error Alert -->
+<div *ngIf="error" class="alert alert-danger my-3">
   {{ error }}
 </div>
 
-<div *ngIf="user && !loading" class="card shadow-sm p-4">
-  <h4 class="mb-4">User Details</h4>
+<!-- User Details Card -->
+<div *ngIf="user && !loading" class="card shadow-sm border-0 p-4 my-4">
+  <h4 class="mb-4 border-bottom pb-2">User Details</h4>
 
-  <div class="row mb-2">
-    <div class="col-md-6"><strong>Name:</strong> {{ user.name }}</div>
-    <div class="col-md-6"><strong>Email:</strong> {{ user.email }}</div>
-  </div>
-
-  <div class="row mb-2">
-    <div class="col-md-6"><strong>Phone:</strong> {{ user.phone }}</div>
-    <div class="col-md-6"><strong>Role:</strong> {{ user.role }}</div>
-  </div>
-
-  <div class="row mb-2">
-    <div class="col-md-6">
+  <div class="row mb-3">
+    <div class="col-md-6 mb-2"><strong>Name:</strong> {{ user.name }}</div>
+    <div class="col-md-6 mb-2"><strong>Email:</strong> {{ user.email }}</div>
+    <div class="col-md-6 mb-2"><strong>Phone:</strong> {{ user.phone }}</div>
+    <div class="col-md-6 mb-2"><strong>Role:</strong> {{ user.role }}</div>
+    <div class="col-md-6 mb-2">
       <strong>Created At:</strong> {{ user.createdAt | date : "medium" }}
     </div>
   </div>
 
+  <!-- Address Section -->
   <div *ngIf="user.address" class="mt-4">
-    <h5 class="mb-3">Address</h5>
+    <h5 class="mb-3 border-bottom pb-2">Address</h5>
     <p class="mb-1"><strong>Street:</strong> {{ user.address.street }}</p>
     <p class="mb-1"><strong>City:</strong> {{ user.address.city }}</p>
     <p class="mb-1"><strong>Country:</strong> {{ user.address.country }}</p>
   </div>
 </div>
 
-<div *ngIf="user?.customer" class="mt-4">
-  <h5>Customer Info</h5>
-  <p>
-    <strong>Verified:</strong> {{ user.customer.isVerified ? "Yes" : "No" }}
-  </p>
-  <p><strong>Orders:</strong> {{ user.customer.orderCount }}</p>
-  <p><strong>Reviews:</strong> {{ user.customer.reviewCount }}</p>
-  <p><strong>Wishlist items:</strong> {{ user.customer.wishlistCount }}</p>
-  <p><strong>Basket items:</strong> {{ user.customer.basketCount }}</p>
+<!-- Customer Info Section -->
+<div *ngIf="user?.customer" class="card border-0 shadow-sm p-4 mb-4">
+  <h5 class="mb-3 border-bottom pb-2">Customer Info</h5>
+  <div class="row">
+    <div class="col-md-4 mb-2">
+      <strong>Verified:</strong> {{ user.customer.isVerified ? "Yes" : "No" }}
+    </div>
+    <div class="col-md-4 mb-2">
+      <strong>Orders:</strong> {{ user.customer.orderCount }}
+    </div>
+    <div class="col-md-4 mb-2">
+      <strong>Reviews:</strong> {{ user.customer.reviewCount }}
+    </div>
+    <div class="col-md-4 mb-2">
+      <strong>Wishlist items:</strong> {{ user.customer.wishlistCount }}
+    </div>
+    <div class="col-md-4 mb-2">
+      <strong>Basket items:</strong> {{ user.customer.basketCount }}
+    </div>
+  </div>
 </div>
 
-<div *ngIf="user?.seller?.products?.length" class="mt-4">
-  <h5>Recent Products</h5>
-  <table class="table table-sm table-striped">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Price</th>
-        <th>Stock</th>
-        <th>Active</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let product of user.seller.products">
-        <td>{{ product.title }}</td>
-        <td>{{ product.price | currency }}</td>
-        <td>{{ product.stock }}</td>
-        <td>
-          <span
-            class="badge"
-            [class.bg-success]="product.active"
-            [class.bg-secondary]="!product.active"
-          >
-            {{ product.active ? "Yes" : "No" }}
-          </span>
-        </td>
-        <td>
-          <a
-            [routerLink]="['/dashboard/products', product.id]"
-            class="btn btn-sm btn-outline-primary"
-            >View</a
-          >
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<!-- Action Buttons -->
+<div class="d-flex flex-wrap gap-2 mt-3">
+  <button
+    *ngIf="user?.seller?.products?.length"
+    class="btn btn-outline-primary d-flex align-items-center"
+    (click)="onSellerProducts()"
+  >
+    <i class="bi bi-box-seam me-2"></i> View Seller's Products
+  </button>
+  <button
+    class="btn btn-outline-primary d-flex align-items-center"
+    (click)="onEdit()"
+  >
+    <i class="bi bi-pencil-square me-2"></i> Edit
+  </button>
+  <button
+    class="btn btn-outline-danger d-flex align-items-center"
+    (click)="onDelete()"
+  >
+    <i class="bi bi-trash me-2"></i> Delete
+  </button>
+  <button
+    class="btn btn-outline-secondary d-flex align-items-center"
+    (click)="onBack()"
+  >
+    <i class="bi bi-arrow-left me-2"></i> Back
+  </button>
 </div>

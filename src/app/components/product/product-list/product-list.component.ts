@@ -15,7 +15,7 @@ import { ConfirmationService } from '../../../services/confirmation/confirmation
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
   imports: [CommonModule, FormsModule, NgSelectModule],
-  styleUrls: ['./product-list.component.scss'],
+  styleUrls: ['./product-list.component.scss', '../../../app.component.scss'],
 })
 export class ProductListComponent implements OnInit {
   private readonly SERVER_URL = environment.SERVER_URL;
@@ -25,7 +25,7 @@ export class ProductListComponent implements OnInit {
 
   products: any[] = [];
   categories: any[] = [];
-  filters: any = { categoryIds: [], sellerId: undefined };
+  filters: any = { categoryIds: [], sellerIds: [] };
   sortMode = 'CREATED_AT';
   sortOrder = 'DESC';
   sellers: any[] = [];
@@ -58,7 +58,10 @@ export class ProductListComponent implements OnInit {
 
     this.route.queryParams.subscribe((params) => {
       const categoryId = params['category'];
+      const sellerId = params['sellerId'];
+      console.log('Query params:', params);
       if (categoryId) this.filters.categoryIds = [categoryId];
+      if (sellerId) this.filters.sellerIds = [sellerId];
     });
 
     this.loadCategories();
@@ -75,9 +78,9 @@ export class ProductListComponent implements OnInit {
     this.productService.listSellers().subscribe({
       next: (res) => {
         this.sellers = res.data.listSellers.map((s: any) => ({
-          id: s.id, // or s.user.id if you want user id
-          name: s.user.name, // flatten name for ng-select
-          email: s.user.email, // optional
+          id: s.id,
+          name: s.user.name,
+          email: s.user.email,
         }));
       },
       error: (err) => {
@@ -103,7 +106,7 @@ export class ProductListComponent implements OnInit {
 
     const filters = { ...this.filters };
     if (this.isAdmin && this.listMode === 'MY') {
-      filters.sellerId = this.userService.getId();
+      filters.sellerIds = [this.userService.getId()];
     }
 
     this.productService

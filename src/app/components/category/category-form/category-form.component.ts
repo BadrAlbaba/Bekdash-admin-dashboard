@@ -218,10 +218,10 @@ export class CategoryFormComponent implements OnInit {
         )
         .then((confirmed) => {
           if (!confirmed) return;
-          this.router.navigate(['/dashboard/categories']);
+          window.history.back();
         });
     } else {
-      this.router.navigate(['/dashboard/categories']);
+      window.history.back();
     }
   }
 }

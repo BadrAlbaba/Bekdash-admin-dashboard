@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { Category } from '../../models/category.models';
 import { environment } from '../../../enviroments/environment';
 import { GraphQLResponse } from '../../models/graphql.models';
 
@@ -19,7 +18,7 @@ export class CategoryService {
     level: string,
     parentId?: string,
     image?: string
-  ): Observable<Category> {
+  ): Observable<any> {
     const query = `
       mutation AddCategory($input: CategoryInput!) {
         addCategory(input: $input) {
@@ -40,7 +39,7 @@ export class CategoryService {
     };
 
     return this.http
-      .post<GraphQLResponse<{ addCategory: Category }>>(this.GRAPHQL_API, {
+      .post<GraphQLResponse<{ addCategory: any }>>(this.GRAPHQL_API, {
         query,
         variables,
       })
@@ -93,6 +92,30 @@ export class CategoryService {
       .pipe(
         // Optional: Map the response data
         map((res) => res.data.getCategory)
+      );
+  }
+
+  deleteCategory(id: string): Observable<boolean> {
+    const mutation = `
+    mutation DeleteCategory($id: ID!) {
+      deleteCategory(id: $id)
+    }
+  `;
+
+    return this.http
+      .post<GraphQLResponse<{ deleteCategory: boolean }>>(this.GRAPHQL_API, {
+        query: mutation,
+        variables: { id },
+      })
+      .pipe(
+        map((res) => {
+          if (res.errors?.length) {
+            console.log(res.errors);
+            const userFriendly = this.mapGraphQLError(res.errors[0].message);
+            throw new Error(userFriendly);
+          }
+          return res.data?.deleteCategory ?? false;
+        })
       );
   }
 
@@ -171,8 +194,15 @@ export class CategoryService {
       normalized.includes('name')
     ) {
       return 'A category with this name already exists.';
+    } else if (
+      normalized.includes('cannot delete a category with subcategories.')
+    ) {
+      return 'This category has subcategories and cannot be deleted.';
+    } else if (
+      normalized.includes('cannot delete a category that contains products')
+    ) {
+      return 'This category contains products and cannot be deleted.';
     }
-
     return 'An unexpected error occurred. Please try again.';
   }
 }

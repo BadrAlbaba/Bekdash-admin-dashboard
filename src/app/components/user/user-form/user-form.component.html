@@ -62,7 +62,17 @@
       <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
     </select>
   </div>
-  <button type="submit" class="btn btn-success" [disabled]="userForm.invalid">
-    {{ isEditMode ? "Update User" : "Add User" }}
-  </button>
+
+  <div class="gap-2 d-flex flex-wrap">
+    <button type="submit" class="btn btn-success" [disabled]="userForm.invalid">
+      {{ isEditMode ? "Update User" : "Add User" }}
+    </button>
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+  </div>
 </form>

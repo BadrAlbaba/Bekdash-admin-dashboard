@@ -1,1 +1,337 @@
-<p>order-list works!</p>
+<h4 class="mb-4 mt-2 text-center page-title">Orders List</h4>
+
+<!-- Filter & Controls -->
+<div class="bg-light p-3 rounded shadow-sm mb-3">
+  <div class="d-flex flex-wrap justify-content-start align-items-center gap-2">
+    <!-- Admin View Mode & Scope -->
+    <div class="d-flex gap-2 flex-wrap align-items-center">
+      <select
+        class="form-select form-select-sm w-auto"
+        [(ngModel)]="viewMode"
+        (change)="loadOrders()"
+      >
+        <option value="ORDER">Orders</option>
+        <option value="ITEM">Order Items</option>
+      </select>
+
+      <select
+        class="form-select form-select-sm w-auto"
+        [(ngModel)]="listMode"
+        (change)="loadOrders()"
+      >
+        <option value="ALL">All Store</option>
+        <option value="MY">My Sales</option>
+      </select>
+    </div>
+
+    <!-- Multi-Status Filter -->
+    <ng-select
+      [items]="orderStatuses"
+      bindLabel="label"
+      bindValue="value"
+      [(ngModel)]="statusFilters"
+      [multiple]="true"
+      [clearable]="true"
+      placeholder="Filter by status"
+      class="form-control form-control-sm w-auto"
+      (change)="loadOrders()"
+    ></ng-select>
+
+    <input
+      type="text"
+      class="form-control form-control-sm w-auto"
+      [(ngModel)]="orderIdFilter"
+      (input)="onOrderIdChange($event)"
+      placeholder="🔎 Filter by Order ID"
+    />
+
+    <ng-select
+      *ngIf="viewMode === 'ITEM'"
+      [items]="productOptions"
+      bindLabel="title"
+      bindValue="id"
+      [multiple]="true"
+      [(ngModel)]="selectedProductIds"
+      placeholder="Filter by products"
+      class="form-control form-control-sm w-auto"
+      (change)="loadOrders()"
+    ></ng-select>
+
+    <!-- Seller Filter (only for admin in ITEM mode & ALL mode) -->
+    <ng-select
+      *ngIf="isAdmin && viewMode === 'ITEM' && listMode === 'ALL'"
+      [items]="sellerOptions"
+      bindLabel="name"
+      bindValue="id"
+      [(ngModel)]="selectedSellerIds"
+      [multiple]="true"
+      [clearable]="true"
+      placeholder="Filter by seller"
+      class="form-control form-control-sm w-auto"
+      (change)="loadOrders()"
+    ></ng-select>
+
+    <!-- Search by Customer Name -->
+    <input
+      type="text"
+      class="form-control form-control-sm w-auto"
+      placeholder="🔍 Search customer"
+      (input)="onSearchChange($event)"
+    />
+
+    <!-- Date Range Filters -->
+    <input
+      type="date"
+      class="form-control form-control-sm w-auto"
+      [(ngModel)]="exportStartDate"
+      placeholder="Start Date"
+      (change)="loadOrders()"
+    />
+
+    <input
+      type="date"
+      class="form-control form-control-sm w-auto"
+      [(ngModel)]="exportEndDate"
+      placeholder="End Date"
+      (change)="loadOrders()"
+    />
+
+    <button
+      class="btn btn-sm btn-outline-secondary"
+      type="button"
+      (click)="clearFilters()"
+    >
+      Clear Filters
+    </button>
+  </div>
+</div>
+
+<div class="d-flex gap-2 justify-content-end mb-2 flex-wrap align-items-center">
+  <select class="form-select form-select-sm w-auto" [(ngModel)]="exportScope">
+    <option value="CURRENT">Export Current Page</option>
+    <option value="ALL">Export All Matching</option>
+  </select>
+
+  <button class="btn btn-outline-secondary btn-sm" (click)="exportExcel()">
+    Export Excel
+  </button>
+
+  <button class="btn btn-outline-secondary btn-sm" (click)="exportCSV()">
+    Export CSV
+  </button>
+
+  <button class="btn btn-outline-secondary btn-sm" (click)="printOrders()">
+    Print
+  </button>
+</div>
+
+<!-- Pagination (Top) -->
+<div
+  class="d-flex justify-content-center align-items-center gap-2 mt-3 mb-3 p-3"
+  *ngIf="!loading && totalCount > 0"
+>
+  <button
+    class="btn btn-outline-primary btn-sm"
+    [disabled]="page === 1"
+    (click)="previousPage()"
+  >
+    &laquo; Previous
+  </button>
+
+  <span class="small text-muted">Showing {{ showingRange }}</span>
+
+  <button
+    class="btn btn-outline-primary btn-sm"
+    [disabled]="page === totalPages"
+    (click)="nextPage()"
+  >
+    Next &raquo;
+  </button>
+</div>
+
+<div *ngIf="loading" class="text-center my-4">
+  <div class="spinner-border text-primary" role="status"></div>
+</div>
+
+<!-- Orders Table -->
+<table class="table table-striped table-hover align-middle">
+  <thead class="table-light">
+    <tr>
+      <th (click)="setSort('CREATED_AT')" style="cursor: pointer">Date ↓</th>
+      <th style="width: 200px">Order ID</th>
+      <th style="width: 200px">Customer</th>
+      <th *ngIf="viewMode === 'ITEM' && isAdmin" style="width: 200px">
+        Seller
+      </th>
+      <th>Status</th>
+      <th *ngIf="viewMode === 'ORDER'">
+        {{ isSeller ? "My Items" : "Items" }}
+      </th>
+      <th *ngIf="viewMode === 'ITEM'">Quantity</th>
+      <th>{{ isSeller ? "My Total" : "Price" }}</th>
+      <th>Shipping</th>
+      <th style="width: 200px" *ngIf="viewMode === 'ITEM'">Product</th>
+      <th style="width: 50px">Actions</th>
+    </tr>
+  </thead>
+
+  <!-- ORDER View -->
+  <tbody *ngIf="viewMode === 'ORDER'">
+    <ng-container *ngFor="let order of orders">
+      <tr>
+        <td>{{ order.createdAt | date : "short" }}</td>
+        <td>{{ order.id }}</td>
+        <td>{{ order.customer?.user?.name }}</td>
+        <td>
+          <ng-container *ngIf="order.items?.length; else noItems">
+            <div
+              class="status-toggle d-inline-flex align-items-center gap-2"
+              (click)="toggleExpanded(order.id)"
+              style="cursor: pointer"
+            >
+              <div
+                class="chevron"
+                [ngClass]="{ expanded: expandedOrderId === order.id }"
+              ></div>
+
+              <ng-container
+                *ngFor="let status of getGroupedStatuses(order.items)"
+              >
+                <span
+                  class="badge me-1"
+                  [ngClass]="getStatusClass(status.status)"
+                >
+                  {{ status.status }}
+                </span>
+              </ng-container>
+            </div>
+          </ng-container>
+          <ng-template #noItems>
+            <span class="text-muted">No items</span>
+          </ng-template>
+        </td>
+        <td>{{ order.items?.length || 0 }}</td>
+        <td>{{ getOrderTotal(order) | currency }}</td>
+        <td>
+          <small>
+            {{ order.shippingStreet }}, {{ order.shippingCity }},
+            {{ order.shippingCountry }}
+          </small>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-primary" (click)="viewOrder(order.id)">
+            View
+          </button>
+        </td>
+      </tr>
+
+      <!-- Expandable Row -->
+      <tr
+        *ngIf="expandedOrderId === order.id"
+        #expandedRow
+        class="expanded-row transition-fade bg-light"
+      >
+        <td colspan="10">
+          <div class="ps-3 border-start border-2">
+            <div
+              *ngFor="let status of getGroupedStatuses(order.items)"
+              class="mb-2"
+            >
+              <strong>{{ status.status }}</strong>
+              <ul class="mb-0 small">
+                <li *ngFor="let line of status.lines">{{ line }}</li>
+              </ul>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+
+  <!-- ITEM View -->
+  <tbody *ngIf="viewMode === 'ITEM'">
+    <tr *ngFor="let item of orders">
+      <td>
+        {{
+          item?.order?.createdAt ? (item.order.createdAt | date : "short") : "—"
+        }}
+      </td>
+      <td>{{ item?.order?.id || "—" }}</td>
+      <td>{{ item?.order?.customer?.user?.name || "—" }}</td>
+      <td *ngIf="isAdmin">{{ item?.product.seller?.user?.name }}</td>
+      <td>
+        <span class="badge" [ngClass]="getStatusClass(item.status)">
+          {{ item.status }}
+        </span>
+      </td>
+      <td>{{ item.quantity }}</td>
+      <td>{{ item.price * item.quantity | currency }}</td>
+      <td>
+        {{ item.order.shippingStreet }}, {{ item.order.shippingCity }} ,{{
+          item.order.shippingCountry
+        }}
+      </td>
+      <td>
+        <small>
+          {{ item.product.title }}
+        </small>
+      </td>
+      <td>
+        <div class="dropdown">
+          <button
+            class="btn btn-sm btn-outline-secondary dropdown-toggle"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Actions
+          </button>
+          <ul class="dropdown-menu">
+            <li *ngFor="let status of availableStatuses(item.status)">
+              <a
+                class="dropdown-item"
+                (click)="changeOrderItemStatus(item.id, status)"
+              >
+                <i class="bi bi-arrow-right-circle me-1"></i>
+                Mark as
+                {{ status.replaceAll("_", " ").toLowerCase() | titlecase }}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Empty State -->
+<div
+  *ngIf="!loading && orders.length === 0"
+  class="alert alert-info mt-3 mb-3 p-3"
+>
+  No orders found.
+</div>
+
+<!-- Pagination (Bottom) -->
+<div
+  class="d-flex justify-content-center align-items-center gap-2 mt-3 mb-3 p-3"
+  *ngIf="!loading && totalCount > 0"
+>
+  <button
+    class="btn btn-outline-primary btn-sm"
+    [disabled]="page === 1"
+    (click)="previousPage()"
+  >
+    &laquo; Previous
+  </button>
+
+  <span class="small text-muted">Showing {{ showingRange }}</span>
+
+  <button
+    class="btn btn-outline-primary btn-sm"
+    [disabled]="page === totalPages"
+    (click)="nextPage()"
+  >
+    Next &raquo;
+  </button>
+</div>
