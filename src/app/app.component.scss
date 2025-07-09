@@ -36,6 +36,7 @@ select,
 }
 
 th {
+  background-color: white;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
 
@@ -44,17 +45,23 @@ th {
   }
 }
 
-td,
 th {
-  padding: 0.75rem;
+  padding-top: 1.3rem;
+  padding-bottom: 1.3rem;
+}
+
+td {
+  padding-top: 1.7rem;
+  padding-bottom: 1.7rem;
+  vertical-align: middle;
 }
 
 // Badges
 .badge {
   margin-right: 0.25rem;
-  border-radius: 0.5rem;
-  font-size: 0.75rem;
-  padding: 0.35em 0.6em;
+  border-radius: 0.2rem;
+  font-size: 0.63rem;
+  padding: 0.6em 0.75em;
 }
 
 .badge.bg-secondary {
@@ -99,7 +106,7 @@ button.btn-primary {
   background-color: #ffffff;
   border: 1px solid #dee2e6;
   box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.05);
-  z-index: 1050;
+  z-index: 100;
 }
 
 ::ng-deep .ng-dropdown-panel .ng-option {

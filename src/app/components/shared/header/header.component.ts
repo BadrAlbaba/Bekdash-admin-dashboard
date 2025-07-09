@@ -16,23 +16,38 @@ export class HeaderComponent {
   menuItems = [
     {
       label: 'Products',
-      addLink: '/dashboard/products/new',
-      listLink: '/dashboard/products',
+      sublinks: [
+        { label: 'Add Product', routerLink: '/dashboard/products/new' },
+        { label: 'Show Products', routerLink: '/dashboard/products' },
+      ],
     },
     {
       label: 'Orders',
-      addLink: '/dashboard/orders/new',
-      listLink: '/dashboard/orders',
+      sublinks: [
+        {
+          label: 'New Orders',
+          routerLink: '/dashboard/orders',
+          queryParams: { status: 'PLACED', viewMode: 'ITEM' },
+        },
+        {
+          label: 'All Orders',
+          routerLink: '/dashboard/orders',
+        },
+      ],
     },
     {
       label: 'Categories',
-      addLink: '/dashboard/categories/new',
-      listLink: '/dashboard/categories',
+      sublinks: [
+        { label: 'Add Category', routerLink: '/dashboard/categories/new' },
+        { label: 'Show Categories', routerLink: '/dashboard/categories' },
+      ],
     },
     {
       label: 'Users',
-      addLink: '/dashboard/users/new',
-      listLink: '/dashboard/users',
+      sublinks: [
+        { label: 'Add User', routerLink: '/dashboard/users/new' },
+        { label: 'Show Users', routerLink: '/dashboard/users' },
+      ],
     },
   ];
 
@@ -54,7 +69,6 @@ export class HeaderComponent {
   }
   filterMenuItems() {
     const role = this.userService.getRole();
-    // Assuming userService has a getCurrentUser() returning the logged-in user object
 
     if (role === 'SELLER') {
       this.menuItems = this.menuItems.filter(

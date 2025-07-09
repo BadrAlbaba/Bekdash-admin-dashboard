@@ -1,0 +1,174 @@
+<div class="analytics-page container py-4">
+  <h2 class="mb-4 fw-bold">Dashboard Analytics</h2>
+
+  <!-- Personal Stats Section -->
+  <section *ngIf="data?.personalStats as personalStats">
+    <h4 class="section-title">Your Store</h4>
+
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="card stat-card">
+          <div class="card-body">
+            <h5 class="card-title">Total Orders</h5>
+            <p class="card-text display-6">
+              {{ personalStats.ordersCount }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card stat-card">
+          <div class="card-body">
+            <h5 class="card-title">Orders Today</h5>
+            <p class="card-text display-6">
+              {{ personalStats.todayOrdersCount }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card stat-card">
+          <div class="card-body">
+            <h5 class="card-title">Revenue</h5>
+            <p class="card-text display-6">
+              {{ personalStats.totalRevenue | currency }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mt-2">
+      <div class="col-md-6">
+        <div class="card stat-card">
+          <div class="card-body">
+            <h5 class="card-title">Products</h5>
+            <p class="card-text display-6">
+              {{ personalStats.productCount }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card stat-card">
+          <div class="card-body">
+            <h5 class="card-title">Order Status Breakdown</h5>
+            <ul class="list-group">
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+                *ngFor="let s of personalStats.orderStatusCounts"
+              >
+                {{ s.status }}
+                <span class="badge bg-dark rounded-pill">{{ s.count }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <h6 class="fw-semibold">Top Selling Products</h6>
+      <ul class="list-group">
+        <li
+          *ngFor="let p of personalStats.bestSellingProducts"
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          {{ p.title }}
+          <span class="badge bg-primary rounded-pill">{{ p.totalSold }}</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Global Stats Section (Admin Only) -->
+  <section *ngIf="data?.globalStats as globalStats">
+    <h4 class="section-title mt-5">Store-Wide Stats</h4>
+
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="card stat-card bg-light">
+          <div class="card-body">
+            <h5 class="card-title">Total Orders</h5>
+            <p class="card-text display-6">
+              {{ globalStats.totalOrders }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card stat-card bg-light">
+          <div class="card-body">
+            <h5 class="card-title">New Orders Today</h5>
+            <p class="card-text display-6">
+              {{ globalStats.newOrdersToday }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card stat-card bg-light">
+          <div class="card-body">
+            <h5 class="card-title">Total Revenue</h5>
+            <p class="card-text display-6">
+              {{ globalStats.totalRevenue | currency }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mt-2">
+      <div class="col-md-4">
+        <div class="card stat-card">
+          <div class="card-body">
+            <h5 class="card-title">Total Customers</h5>
+            <p class="card-text display-6">
+              {{ globalStats.totalCustomers }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card stat-card">
+          <div class="card-body">
+            <h5 class="card-title">Total Products</h5>
+            <p class="card-text display-6">
+              {{ globalStats.totalProducts }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card stat-card">
+          <div class="card-body">
+            <h5 class="card-title">Total Sellers</h5>
+            <p class="card-text display-6">
+              {{ globalStats.totalSellers }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <h6 class="fw-semibold">Order Status Breakdown</h6>
+      <ul class="list-group">
+        <li
+          *ngFor="let s of globalStats.orderStatusCounts"
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          {{ s.status }}
+          <span class="badge bg-dark rounded-pill">{{ s.count }}</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+</div>

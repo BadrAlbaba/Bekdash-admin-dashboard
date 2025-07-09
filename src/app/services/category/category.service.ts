@@ -9,7 +9,7 @@ import { GraphQLResponse } from '../../models/graphql.models';
   providedIn: 'root',
 })
 export class CategoryService {
-  private readonly http = inject(HttpClient);
+  constructor(private http: HttpClient) {}
   private readonly GRAPHQL_API = environment.GRAPHQL_API;
 
   addCategory(

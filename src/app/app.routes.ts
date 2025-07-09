@@ -13,6 +13,7 @@ import { UserDetailComponent } from './components/user/user-detail/user-detail.c
 import { ProductFormComponent } from './components/product/product-form/product-form.component';
 import { ProductDetailComponent } from './components/product/product-detail/product-detail.component';
 import { CategoryDetailComponent } from './components/category/category-detail/category-detail.component';
+import { AnalyticsComponent } from './components/analytics/analytics.component';
 
 export const routes: Routes = [
   {
@@ -31,6 +32,12 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     data: { roles: ['ADMIN', 'SELLER'] },
     children: [
+      {
+        path: 'analytics',
+        loadComponent: () => AnalyticsComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ['ADMIN', 'SELLER'] },
+      },
       {
         path: 'users',
         loadComponent: () => UserListComponent,

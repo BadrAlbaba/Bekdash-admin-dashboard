@@ -8,8 +8,13 @@
     <li class="dropdown" *ngFor="let item of menuItems">
       <button class="dropbtn">{{ item.label }}</button>
       <div class="dropdown-content">
-        <a [routerLink]="item.addLink">Add</a>
-        <a [routerLink]="item.listLink">Show List</a>
+        <a
+          *ngFor="let link of item.sublinks"
+          [routerLink]="link.routerLink"
+          [queryParams]="link.queryParams"
+        >
+          {{ link.label }}
+        </a>
       </div>
     </li>
     <li class="logout-mobile">

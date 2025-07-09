@@ -14,6 +14,7 @@ import * as XLSX from 'xlsx';
 import { OrderService } from '../../../services/order/order.service';
 import { UserStateService } from '../../../services/auth/user-state.service';
 import { ToastService } from '../../../services/toast/toast.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-order-list',
@@ -85,20 +86,37 @@ export class OrderListComponent implements OnInit {
   constructor(
     private orderService: OrderService,
     private userService: UserStateService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private route: ActivatedRoute
   ) {}
 
   /** Lifecycle */
   ngOnInit(): void {
     this.isAdmin = this.userService.getRole() === 'ADMIN';
     this.isSeller = this.userService.getRole() === 'SELLER';
-    if (this.isAdmin) {
-      this.listMode = 'ALL';
-      this.loadSellerOptions();
-    }
 
-    this.loadProductOptions();
-    this.loadOrders();
+    this.route.queryParamMap.subscribe((params) => {
+      const status = params.get('status');
+      const view = params.get('viewMode');
+
+      if (status) {
+        this.statusFilters = [status];
+      } else {
+        this.statusFilters = [];
+      }
+
+      if (view === 'ITEM' || view === 'ORDER') {
+        this._viewMode = view as 'ITEM' | 'ORDER';
+      }
+
+      if (this.isAdmin) {
+        this.listMode = 'ALL';
+        this.loadSellerOptions();
+      }
+
+      this.loadProductOptions();
+      this.loadOrders();
+    });
 
     this.searchSubject.pipe(debounceTime(400)).subscribe((val) => {
       this.searchTerm = val;

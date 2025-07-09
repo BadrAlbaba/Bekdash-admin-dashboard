@@ -1,9 +1,10 @@
 .expanded-row {
   animation: fadeInRow 0.3s ease-in-out;
+  padding: 2rem;
   td {
     background-color: #f8f9fa;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
   }
 }
 
