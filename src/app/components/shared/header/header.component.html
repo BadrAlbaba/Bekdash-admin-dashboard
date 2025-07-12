@@ -1,26 +1,30 @@
 <nav class="navbar">
   <div class="navbar-header">
-    <div class="navbar-logo">Bekdash</div>
+    <div class="navbar-logo">{{ "LOGO" | translate }}</div>
     <button class="hamburger" (click)="toggleMenu()">&#9776;</button>
   </div>
 
   <ul class="navbar-menu" [class.open]="menuOpen">
     <li class="dropdown" *ngFor="let item of menuItems">
-      <button class="dropbtn">{{ item.label }}</button>
+      <button class="dropbtn">{{ item.label | translate }}</button>
       <div class="dropdown-content">
         <a
           *ngFor="let link of item.sublinks"
           [routerLink]="link.routerLink"
           [queryParams]="link.queryParams"
         >
-          {{ link.label }}
+          {{ link.label | translate }}
         </a>
       </div>
     </li>
     <li class="logout-mobile">
-      <button class="logout-btn" (click)="logout()">Logout</button>
+      <button class="logout-btn" (click)="logout()">
+        {{ "LOGOUT" | translate }}
+      </button>
     </li>
   </ul>
 
-  <button class="logout-btn desktop-only" (click)="logout()">Logout</button>
+  <button class="logout-btn desktop-only" (click)="logout()">
+    {{ "LOGOUT" | translate }}
+  </button>
 </nav>

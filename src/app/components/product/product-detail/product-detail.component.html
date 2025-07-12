@@ -1,4 +1,6 @@
-<h3 class="mb-4 mt-2 text-center title">{{ product.title }}</h3>
+<div *ngIf="!product.thumbnail" class="text-muted mb-2">
+  {{ "PRODUCT_VIEW.NO_THUMBNAIL" | translate }}
+</div>
 
 <div class="row">
   <!-- Thumbnail + gallery -->
@@ -27,36 +29,54 @@
   <div class="col-md-8">
     <div class="row">
       <div class="p-3 bg-light rounded shadow-sm">
-        <h5 class="mb-3 border-bottom pb-2">Product Details</h5>
+        <h5 class="mb-3 border-bottom pb-2">
+          {{ "PRODUCT_VIEW.DETAILS" | translate }}
+        </h5>
         <div class="row mb-2">
-          <div class="col-sm-4 text-muted">Title:</div>
+          <div class="col-sm-4 text-muted">
+            {{ "PRODUCT_VIEW.TITLE" | translate }}
+          </div>
           <div class="col-sm-8">{{ product.title }}</div>
         </div>
         <div class="row mb-2">
-          <div class="col-sm-4 text-muted">Price:</div>
+          <div class="col-sm-4 text-muted">
+            {{ "PRODUCT_VIEW.PRICE" | translate }}
+          </div>
           <div class="col-sm-8">{{ product.price | currency }}</div>
         </div>
         <div class="row mb-2">
-          <div class="col-sm-4 text-muted">Stock:</div>
+          <div class="col-sm-4 text-muted">
+            {{ "PRODUCT_VIEW.STOCK" | translate }}
+          </div>
           <div class="col-sm-8">{{ product.stock }}</div>
         </div>
         <div class="row mb-2">
-          <div class="col-sm-4 text-muted">Rating:</div>
+          <div class="col-sm-4 text-muted">
+            {{ "PRODUCT_VIEW.RATING" | translate }}
+          </div>
           <div class="col-sm-8">{{ product.averageRating }}</div>
         </div>
         <div class="row mb-2">
-          <div class="col-sm-4 text-muted">Active:</div>
+          <div class="col-sm-4 text-muted">
+            {{ "PRODUCT_VIEW.ACTIVE" | translate }}
+          </div>
           <div class="col-sm-8">
             <span
               class="badge"
               [ngClass]="product.active ? 'bg-success' : 'bg-danger'"
             >
-              {{ product.active ? "Active" : "Inactive" }}
+              {{
+                product.active
+                  ? ("PRODUCT_VIEW.ACTIVE" | translate)
+                  : ("PRODUCT_VIEW.INACTIVE" | translate)
+              }}
             </span>
           </div>
         </div>
         <div class="row mb-2">
-          <div class="col-sm-4 text-muted">Categories:</div>
+          <div class="col-sm-4 text-muted">
+            {{ "PRODUCT_VIEW.CATEGORIES" | translate }}
+          </div>
           <div class="col-sm-8">
             <span
               *ngFor="let cat of product.categories"
@@ -67,20 +87,28 @@
           </div>
         </div>
         <div class="row mb-2">
-          <div class="col-sm-4 text-muted">Reviews:</div>
+          <div class="col-sm-4 text-muted">
+            {{ "PRODUCT_VIEW.REVIEWS" | translate }}
+          </div>
           <div class="col-sm-8">{{ product.reviewCount }}</div>
         </div>
         <div class="row mb-2">
-          <div class="col-sm-4 text-muted">Orders:</div>
+          <div class="col-sm-4 text-muted">
+            {{ "PRODUCT_VIEW.ORDERS" | translate }}
+          </div>
           <div class="col-sm-8">{{ product.orderCount }}</div>
         </div>
 
         <div class="row mb-2">
-          <div class="col-sm-4 text-muted">Seller:</div>
+          <div class="col-sm-4 text-muted">
+            {{ "PRODUCT_VIEW.SELLER" | translate }}
+          </div>
           <div class="col-sm-8">{{ product.seller?.user?.name }}</div>
         </div>
         <div class="row mb-2" *ngIf="product.discount">
-          <div class="col-sm-4 text-muted">Discount:</div>
+          <div class="col-sm-4 text-muted">
+            {{ "PRODUCT_VIEW.DISCOUNT" | translate }}
+          </div>
           <div class="col-sm-8">
             {{ product.discount.percentage }}% until
             {{ product.discount.validUntil | date }}
@@ -88,28 +116,37 @@
         </div>
       </div>
     </div>
+
+    <!-- Description -->
     <div class="row">
-      <!-- Description -->
       <div class="mt-4 p-3 bg-white rounded shadow-sm border">
-        <h5 class="border-bottom pb-2 mb-2">Description</h5>
-        <p class="text-muted mb-0" [innerHTML]="product.description"></p>
+        <h5 class="border-bottom pb-2 mb-2">
+          {{ "PRODUCT_VIEW.DESCRIPTION" | translate }}
+        </h5>
+
+        <p
+          class="text-muted mb-0"
+          style="overflow-wrap: break-word; word-break: break-word"
+          [innerHTML]="product.description"
+        ></p>
       </div>
     </div>
+    <!-- Actions -->
     <div class="row">
-      <!-- Actions -->
       <div class="mt-4 p-3 d-flex justify-content-center gap-2">
         <button
           class="btn btn-outline-secondary d-flex align-items-center gap-1"
           (click)="editProduct()"
         >
-          <i class="bi bi-pencil-square"></i> Edit
+          <i class="bi bi-pencil-square"></i>
+          {{ "PRODUCT_VIEW.EDIT" | translate }}
         </button>
 
         <button
           class="btn btn-outline-danger d-flex align-items-center gap-1"
           (click)="deleteProduct()"
         >
-          <i class="bi bi-trash"></i> Delete
+          <i class="bi bi-trash"></i> {{ "PRODUCT_VIEW.DELETE" | translate }}
         </button>
 
         <button
@@ -121,21 +158,27 @@
             class="bi"
             [ngClass]="product.active ? 'bi-x-circle' : 'bi-check-circle'"
           ></i>
-          {{ product.active ? "Deactivate" : "Activate" }}
+          {{
+            product.active
+              ? ("PRODUCT_VIEW.DEACTIVATE" | translate)
+              : ("PRODUCT_VIEW.ACTIVATE" | translate)
+          }}
         </button>
 
         <button
           class="btn btn-outline-primary d-flex align-items-center gap-1"
           (click)="viewOrders()"
         >
-          <i class="bi bi-box-seam"></i> View Orders
+          <i class="bi bi-box-seam"></i>
+          {{ "PRODUCT_VIEW.VIEW_ORDERS" | translate }}
         </button>
 
         <button
           class="btn btn-outline-secondary d-flex align-items-center"
           (click)="onBack()"
         >
-          <i class="bi bi-arrow-left me-1"></i> Back
+          <i class="bi bi-arrow-left me-1"></i>
+          {{ "PRODUCT_VIEW.BACK" | translate }}
         </button>
       </div>
     </div>
@@ -145,8 +188,12 @@
 <!-- Reviews -->
 <div *ngIf="product.reviews?.length > 0" class="mt-4">
   <h5 class="border-bottom pb-2 mb-3">
-    Reviews ({{ product.reviews.length }})
+    {{
+      "PRODUCT_VIEW.REVIEWS_HEADER"
+        | translate : { count: product.reviews.length }
+    }}
   </h5>
+
   <ul class="list-group">
     <li *ngFor="let review of product.reviews" class="list-group-item">
       <strong>{{ review.user?.user?.name }}:</strong>
@@ -157,7 +204,7 @@
 </div>
 
 <div *ngIf="!loading && !product" class="alert alert-warning">
-  Product not found.
+  {{ "PRODUCT_VIEW.NOT_FOUND" | translate }}
 </div>
 
 <!-- Lightbox modal -->

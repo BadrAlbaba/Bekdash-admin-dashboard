@@ -5,11 +5,12 @@ import { ToastService } from '../../../services/toast/toast.service';
 import { environment } from '../../../../enviroments/environment';
 import { CommonModule } from '@angular/common';
 import { ConfirmationService } from '../../../services/confirmation/confirmation.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-product-detail',
   templateUrl: './product-detail.component.html',
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   styleUrls: ['./product-detail.component.scss'],
 })
 export class ProductDetailComponent implements OnInit {
@@ -24,7 +25,8 @@ export class ProductDetailComponent implements OnInit {
     private productService: ProductService,
     private toastService: ToastService,
     private router: Router,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -66,20 +68,27 @@ export class ProductDetailComponent implements OnInit {
   deleteProduct(): void {
     this.confirmationService
       .confirm(
-        'Delete User',
-        `Are you sure you want to delete ${this.product.title}?`
+        this.translate.instant('CONFIRMATION.DELETE_PRODUCT_TITLE'),
+        this.translate.instant('CONFIRMATION.DELETE_PRODUCT_MESSAGE', {
+          title: this.product.title,
+        })
       )
       .then((confirmed) => {
         if (!confirmed) return;
 
         this.productService.deleteProduct(this.product.id).subscribe({
           next: () => {
-            this.toastService.show('Product deleted successfully', 'success');
+            this.toastService.show(
+              this.translate.instant('TOAST.PRODUCT_DELETED'),
+              'success'
+            );
             this.router.navigate(['/dashboard/products']);
           },
           error: (err) => {
             this.toastService.show(
-              `Error deleting product: ${err.message}`,
+              this.translate.instant('TOAST.PRODUCT_DELETE_FAILED', {
+                error: err.message,
+              }),
               'error'
             );
           },
@@ -90,18 +99,28 @@ export class ProductDetailComponent implements OnInit {
   toggleActive(): void {
     if (!this.product) return;
     const newStatus = !this.product.active;
+
     this.productService
       .updateProduct(this.product.id, { active: newStatus })
       .subscribe({
         next: () => {
           this.toastService.show(
-            `Product ${newStatus ? 'activated' : 'deactivated'}`,
+            this.translate.instant(
+              newStatus
+                ? 'TOAST.PRODUCT_ACTIVATED'
+                : 'TOAST.PRODUCT_DEACTIVATED'
+            ),
             'success'
           );
           this.loadProduct(this.product.id);
         },
         error: (err) => {
-          this.toastService.show(`Update failed: ${err.message}`, 'error');
+          this.toastService.show(
+            this.translate.instant('TOAST.UPDATE_FAILED', {
+              error: err.message,
+            }),
+            'error'
+          );
         },
       });
   }

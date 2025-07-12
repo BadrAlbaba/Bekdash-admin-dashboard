@@ -4,10 +4,11 @@ import { UserService } from '../../../services/user/user.service';
 import { CommonModule } from '@angular/common';
 import { ConfirmationService } from '../../../services/confirmation/confirmation.service';
 import { ToastService } from '../../../services/toast/toast.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-detail',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './user-detail.component.html',
 })
 export class UserDetailComponent implements OnInit {

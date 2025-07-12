@@ -10,11 +10,12 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { environment } from '../../../../enviroments/environment';
 import { UserStateService } from '../../../services/auth/user-state.service';
 import { ConfirmationService } from '../../../services/confirmation/confirmation.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
-  imports: [CommonModule, FormsModule, NgSelectModule],
+  imports: [CommonModule, FormsModule, NgSelectModule, TranslateModule],
   styleUrls: ['./product-list.component.scss', '../../../app.component.scss'],
 })
 export class ProductListComponent implements OnInit {
@@ -46,7 +47,8 @@ export class ProductListComponent implements OnInit {
     private router: Router,
     private userService: UserStateService,
     private confirmationService: ConfirmationService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -168,13 +170,22 @@ export class ProductListComponent implements OnInit {
       .subscribe({
         next: () => {
           this.toastService.show(
-            `Product ${newStatus ? 'activated' : 'deactivated'}`,
+            this.translate.instant(
+              newStatus
+                ? 'TOAST.PRODUCT_ACTIVATED'
+                : 'TOAST.PRODUCT_DEACTIVATED'
+            ),
             'success'
           );
           product.active = newStatus;
         },
         error: (err) => {
-          this.toastService.show(`Update failed: ${err.message}`, 'error');
+          this.toastService.show(
+            this.translate.instant('TOAST.UPDATE_FAILED', {
+              error: err.message,
+            }),
+            'error'
+          );
         },
       });
   }
@@ -190,20 +201,27 @@ export class ProductListComponent implements OnInit {
   deleteProduct(product: any): void {
     this.confirmationService
       .confirm(
-        'Delete User',
-        `Are you sure you want to delete ${product.title}?`
+        this.translate.instant('CONFIRMATION.DELETE_PRODUCT_TITLE'),
+        this.translate.instant('CONFIRMATION.DELETE_PRODUCT_MESSAGE', {
+          title: product.title,
+        })
       )
       .then((confirmed) => {
         if (!confirmed) return;
 
         this.productService.deleteProduct(product.id).subscribe({
           next: () => {
-            this.toastService.show('Product deleted successfully', 'success');
+            this.toastService.show(
+              this.translate.instant('TOAST.PRODUCT_DELETED'),
+              'success'
+            );
             this.loadProducts();
           },
           error: (err) => {
             this.toastService.show(
-              `Error deleting product: ${err.message}`,
+              this.translate.instant('TOAST.PRODUCT_DELETE_FAILED', {
+                error: err.message,
+              }),
               'error'
             );
           },
@@ -217,10 +235,10 @@ export class ProductListComponent implements OnInit {
   }
 
   get showingRange(): string {
-    if (this.totalCount === 0) return '0 of 0 products';
+    if (this.totalCount === 0) return '0 of 0 منتج';
 
     const start = (this.page - 1) * this.pageSize + 1;
     const end = Math.min(this.page * this.pageSize, this.totalCount);
-    return `${start} – ${end} of ${this.totalCount} products`;
+    return `${start} – ${end} منتج  من ${this.totalCount} `;
   }
 }

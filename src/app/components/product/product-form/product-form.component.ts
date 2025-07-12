@@ -16,6 +16,7 @@ import { QuillModule } from 'ngx-quill';
 import { UploadService } from '../../../services/upload/upload.service';
 import { environment } from '../../../../enviroments/environment';
 import { ConfirmationService } from '../../../services/confirmation/confirmation.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-product-form',
@@ -26,6 +27,7 @@ import { ConfirmationService } from '../../../services/confirmation/confirmation
     ReactiveFormsModule,
     NgSelectModule,
     QuillModule,
+    TranslateModule,
   ],
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.scss'],
@@ -65,7 +67,8 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     private uploadService: UploadService,
     private confirmationService: ConfirmationService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -121,7 +124,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.toastService.show(
-          `Failed to load product: ${err.message}`,
+          this.translate.instant('TOAST.LOAD_FAILED') + ` ${err.message}`,
           'error'
         );
         this.loading = false;
@@ -142,13 +145,26 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     }));
   }
 
+  onPriceInput(event: any) {
+    const value = this.convertArabicToEnglish(event.target.value);
+    this.productForm.get('price')?.setValue(value, { emitEvent: false });
+  }
+
+  onStockInput(event: any) {
+    const value = this.convertArabicToEnglish(event.target.value);
+    this.productForm.get('stock')?.setValue(value, { emitEvent: false });
+  }
+
   onThumbnailSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const files = input.files;
     if (files && files[0]) {
       this.pendingThumbnailFile = files[0];
       this.thumbnailPreviewUrl = URL.createObjectURL(files[0]);
-      this.toastService.show(`Thumbnail queued for upload`, 'info');
+      this.toastService.show(
+        this.translate.instant('TOAST.THUMBNAIL_QUEUED'),
+        'info'
+      );
     }
   }
 
@@ -162,7 +178,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
         ...newFiles.map((f) => URL.createObjectURL(f))
       );
       this.toastService.show(
-        `${files.length} image(s) queued for upload`,
+        `${files.length} ${this.translate.instant('TOAST.IMAGES_QUEUED')}`,
         'info'
       );
     }
@@ -170,13 +186,19 @@ export class ProductFormComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     if (this.productForm.invalid) {
-      this.toastService.show('Please fill all required fields', 'error');
+      this.toastService.show(
+        this.translate.instant('TOAST.FILL_REQUIRED'),
+        'error'
+      );
       return;
     }
 
     const desc = this.productForm.value.description;
     if (!desc || desc.trim() === '' || desc === '<p><br></p>') {
-      this.toastService.show('Description cannot be empty.', 'error');
+      this.toastService.show(
+        this.translate.instant('TOAST.EMPTY_DESCRIPTION'),
+        'error'
+      );
       return;
     }
 
@@ -193,14 +215,20 @@ export class ProductFormComponent implements OnInit, OnDestroy {
   private updateExistingProduct(productData: any): void {
     this.productService.updateProduct(this.productId, productData).subscribe({
       next: () => {
-        this.toastService.show('Product updated successfully', 'success');
+        this.toastService.show(
+          this.translate.instant('TOAST.PRODUCT_UPDATED'),
+          'success'
+        );
         this.uploadPendingImages();
         this.uploadPendingThumbnail();
         this.loading = false;
         this.router.navigate(['/dashboard/products']);
       },
       error: (err) => {
-        this.toastService.show(`Update failed: ${err.message}`, 'error');
+        this.toastService.show(
+          this.translate.instant('TOAST.UPDATE_FAILED', { error: err.message }),
+          'error'
+        );
         this.loading = false;
       },
     });
@@ -211,7 +239,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
       next: (product) => {
         this.productId = product.id;
         this.toastService.show(
-          'Product created. Uploading images...',
+          this.translate.instant('TOAST.PRODUCT_CREATED'),
           'success'
         );
         this.uploadPendingImages();
@@ -224,7 +252,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.toastService.show(
-          `Product creation failed: ${err.message}`,
+          this.translate.instant('TOAST.CREATE_FAILED', { error: err.message }),
           'error'
         );
         this.loading = false;
@@ -241,17 +269,26 @@ export class ProductFormComponent implements OnInit, OnDestroy {
             .subscribe({
               next: (product) => {
                 this.productThumbnail = product.thumbnail;
-                this.toastService.show('Thumbnail upload succeeded', 'success');
+                this.toastService.show(
+                  this.translate.instant('TOAST.THUMBNAIL_SUCCESS'),
+                  'success'
+                );
               },
               error: (err) => {
                 this.toastService.show(
-                  `Thumbnail update failed: ${err.message}`,
+                  this.translate.instant('TOAST.THUMBNAIL_UPDATE_FAILED', {
+                    error: err.message,
+                  }),
                   'error'
                 );
               },
             });
         },
-        error: () => this.toastService.show('Thumbnail upload failed', 'error'),
+        error: () =>
+          this.toastService.show(
+            this.translate.instant('TOAST.THUMBNAIL_UPLOAD_FAILED'),
+            'error'
+          ),
       });
       this.pendingThumbnailFile = null;
     }
@@ -266,11 +303,16 @@ export class ProductFormComponent implements OnInit, OnDestroy {
           this.productService.addProductImage(this.productId, url).subscribe({
             next: (image) => {
               this.productImages.push(image);
-              this.toastService.show('Image uploaded', 'success');
+              this.toastService.show(
+                this.translate.instant('TOAST.IMAGE_UPLOADED'),
+                'success'
+              );
             },
             error: (err) => {
               this.toastService.show(
-                `Adding image failed: ${err.message}`,
+                this.translate.instant('TOAST.IMAGE_ADD_FAILED', {
+                  error: err.message,
+                }),
                 'error'
               );
             },
@@ -278,7 +320,9 @@ export class ProductFormComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.toastService.show(
-            `Uploading image failed: ${err.message}`,
+            this.translate.instant('TOAST.IMAGE_UPLOAD_FAILED', {
+              error: err.message,
+            }),
             'error'
           );
         },
@@ -293,7 +337,10 @@ export class ProductFormComponent implements OnInit, OnDestroy {
       URL.revokeObjectURL(this.thumbnailPreviewUrl);
       this.thumbnailPreviewUrl = null;
       this.pendingThumbnailFile = null;
-      this.toastService.show('Thumbnail removed', 'info');
+      this.toastService.show(
+        this.translate.instant('TOAST.THUMBNAIL_REMOVED'),
+        'info'
+      );
     }
   }
 
@@ -301,16 +348,26 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     URL.revokeObjectURL(this.imagePreviewUrls[index]);
     this.imagePreviewUrls.splice(index, 1);
     this.pendingImageFiles.splice(index, 1);
-    this.toastService.show('Image removed from queue', 'info');
+    this.toastService.show(
+      this.translate.instant('TOAST.IMAGE_QUEUE_REMOVED'),
+      'info'
+    );
   }
 
   onRemoveImage(imageId: string, index: number): void {
     this.productService.removeProductImage(imageId).subscribe({
       next: () => {
         this.productImages.splice(index, 1);
-        this.toastService.show('Image removed', 'success');
+        this.toastService.show(
+          this.translate.instant('TOAST.IMAGE_REMOVED'),
+          'success'
+        );
       },
-      error: () => this.toastService.show('Remove failed', 'error'),
+      error: () =>
+        this.toastService.show(
+          this.translate.instant('TOAST.IMAGE_REMOVE_FAILED'),
+          'error'
+        ),
     });
   }
 
@@ -318,11 +375,16 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     this.productService.updateProductThumbnail(this.productId, '').subscribe({
       next: () => {
         this.productThumbnail = '';
-        this.toastService.show('Thumbnail removed', 'success');
+        this.toastService.show(
+          this.translate.instant('TOAST.THUMBNAIL_REMOVED'),
+          'success'
+        );
       },
       error: (err) => {
         this.toastService.show(
-          `Failed to remove thumbnail: ${err.message}`,
+          this.translate.instant('TOAST.THUMBNAIL_UPDATE_FAILED', {
+            error: err.message,
+          }),
           'error'
         );
       },
@@ -344,8 +406,8 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     if (this.productForm.dirty) {
       this.confirmationService
         .confirm(
-          'Cancel Changes',
-          'You have unsaved changes. Are you sure you want to cancel?'
+          this.translate.instant('CONFIRMATION.CANCEL_TITLE'),
+          this.translate.instant('CONFIRMATION.CANCEL_MESSAGE')
         )
         .then((confirmed) => {
           if (!confirmed) return;
@@ -354,5 +416,40 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     } else {
       window.history.back();
     }
+  }
+
+  onEditorCreated(quill: any) {
+    const editorElem = quill.root as HTMLElement;
+
+    // Also force the container if needed
+    const container = editorElem.closest('.ql-container') as HTMLElement;
+    if (container) {
+      container.style.direction = 'ltr';
+      container.style.textAlign = 'left';
+    }
+
+    // Apply to toolbar if necessary
+    const toolbar = container?.previousElementSibling as HTMLElement;
+    if (toolbar?.classList.contains('ql-toolbar')) {
+      toolbar.style.direction = 'ltr';
+      toolbar.style.textAlign = 'left';
+    }
+  }
+
+  convertArabicToEnglish(input: string): string {
+    const arabicIndicMap: { [key: string]: string } = {
+      '٠': '0',
+      '١': '1',
+      '٢': '2',
+      '٣': '3',
+      '٤': '4',
+      '٥': '5',
+      '٦': '6',
+      '٧': '7',
+      '٨': '8',
+      '٩': '9',
+    };
+
+    return input.replace(/[٠-٩]/g, (d) => arabicIndicMap[d]);
   }
 }

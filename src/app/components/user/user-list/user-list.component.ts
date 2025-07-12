@@ -6,10 +6,11 @@ import { Router } from '@angular/router';
 import { ConfirmationService } from '../../../services/confirmation/confirmation.service';
 import { ToastService } from '../../../services/toast/toast.service';
 import { UserStateService } from '../../../services/auth/user-state.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-list',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss', '../../../app.component.scss'],
 })
@@ -28,7 +29,8 @@ export class UserListComponent implements OnInit {
     private router: Router,
     private confirmationService: ConfirmationService,
     private toastService: ToastService,
-    private userStateService: UserStateService
+    private userStateService: UserStateService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -86,18 +88,28 @@ export class UserListComponent implements OnInit {
 
   onDelete(user: any) {
     this.confirmationService
-      .confirm('Delete User', `Are you sure you want to delete ${user.name}?`)
+      .confirm(
+        this.translate.instant('CONFIRMATION.DELETE_USER_CONFIRM_TITLE'),
+        this.translate.instant('CONFIRMATION.DELETE_USER_CONFIRM_MESSAGE', {
+          name: user.name,
+        })
+      )
       .then((confirmed) => {
         if (!confirmed) return;
 
         this.userService.deleteUser(user.id).subscribe({
           next: () => {
-            this.toastService.show('User deleted successfully', 'success');
+            this.toastService.show(
+              this.translate.instant('TOAST.DELETE_USER_SUCCESS'),
+              'success'
+            );
             this.loadUsers(); // Refresh list
           },
           error: (err) => {
             this.toastService.show(
-              `Error deleting user: ${err.message}`,
+              this.translate.instant('TOAST.DELETE_USER_ERROR', {
+                message: err.message,
+              }),
               'error'
             );
           },

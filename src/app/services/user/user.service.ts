@@ -78,7 +78,6 @@ export class UserService {
       .pipe(
         map((res) => {
           if (res.errors?.length) {
-            // 👇 Throw the first GraphQL error so the component can catch it
             throw new Error(res.errors[0].message);
           }
           return res.data.deleteUser;

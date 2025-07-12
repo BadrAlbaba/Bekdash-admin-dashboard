@@ -1,5 +1,9 @@
 <h4 class="mb-4 mt-2 text-center title">
-  {{ productId ? "Edit Product" : "Add Product" }}
+  {{
+    productId
+      ? ("PRODUCT_FORM.EDIT_TITLE" | translate)
+      : ("PRODUCT_FORM.ADD_TITLE" | translate)
+  }}
 </h4>
 
 <form
@@ -9,17 +13,18 @@
 >
   <!-- Title -->
   <div class="mb-3">
-    <label>Title</label>
+    <label>{{ "PRODUCT_FORM.TITLE" | translate }}</label>
     <input formControlName="title" class="form-control" />
   </div>
 
   <!-- Description -->
   <div class="mb-3">
-    <label>Description</label>
+    <label>{{ "PRODUCT_FORM.DESCRIPTION" | translate }}</label>
     <quill-editor
       formControlName="description"
+      (onEditorCreated)="onEditorCreated($event)"
       [styles]="{ height: '200px', width: '100%' }"
-      [placeholder]="'Enter product description...'"
+      [placeholder]="'PRODUCT_FORM.DESCRIPTION_PLACEHOLDER' | translate"
       [modules]="quillModules"
       class="form-control quill-custom"
     ></quill-editor>
@@ -27,21 +32,34 @@
 
   <!-- Price -->
   <div class="mb-3">
-    <label>Price</label>
-    <input type="number" formControlName="price" class="form-control" />
+    <label>{{ "PRODUCT_FORM.PRICE" | translate }}</label>
+    <input
+      type="text"
+      formControlName="price"
+      class="form-control"
+      (input)="onPriceInput($event)"
+    />
   </div>
 
   <!-- Stock -->
   <div class="mb-3">
-    <label>Stock</label>
-    <input type="number" formControlName="stock" class="form-control" />
+    <label>{{ "PRODUCT_FORM.STOCK" | translate }}</label>
+    <input
+      type="text"
+      formControlName="stock"
+      class="form-control"
+      (input)="onStockInput($event)"
+    />
   </div>
 
   <!-- Categories -->
   <div class="mb-3">
-    <label
-      >Categories <span class="text-muted">(maximum 3 categories)</span></label
-    >
+    <label>
+      {{ "PRODUCT_FORM.CATEGORIES" | translate }}
+      <span class="text-muted">
+        ({{ "PRODUCT_FORM.CATEGORIES_NOTE" | translate }})
+      </span>
+    </label>
     <ng-select
       [items]="categories"
       bindLabel="name"
@@ -49,30 +67,19 @@
       formControlName="categoryIds"
       [multiple]="true"
       [closeOnSelect]="false"
-      placeholder="Select categories"
+      [placeholder]="'PRODUCT_FORM.SELECT_CATEGORIES' | translate"
       class="form-control"
       (change)="updateCategoryDisabledState()"
     >
     </ng-select>
     <small class="text-danger" *ngIf="categoryLimitReached">
-      You have reached the maximum of 3 categories.
+      {{ "PRODUCT_FORM.CATEGORY_LIMIT_REACHED" | translate }}
     </small>
-  </div>
-
-  <!-- Active -->
-  <div class="mb-3 form-check">
-    <input
-      type="checkbox"
-      formControlName="active"
-      class="form-check-input"
-      id="activeCheck"
-    />
-    <label class="form-check-label" for="activeCheck">Active</label>
   </div>
 
   <!-- Thumbnail Upload -->
   <div class="mb-3">
-    <label>Upload Thumbnail</label>
+    <label>{{ "PRODUCT_FORM.UPLOAD_THUMBNAIL" | translate }}</label>
     <input
       type="file"
       (change)="onThumbnailSelected($event)"
@@ -82,7 +89,9 @@
 
   <!-- Existing Thumbnail -->
   <div *ngIf="productThumbnail && !thumbnailPreviewUrl" class="mt-2">
-    <h6 class="text-muted">Current Thumbnail</h6>
+    <h6 class="text-muted">
+      {{ "PRODUCT_FORM.CURRENT_THUMBNAIL" | translate }}
+    </h6>
     <div class="position-relative" style="width: 100px">
       <img
         [src]="getImageUrl(productThumbnail)"
@@ -101,7 +110,7 @@
 
   <!-- Thumbnail preview -->
   <div *ngIf="thumbnailPreviewUrl" class="mt-2">
-    <h6 class="text-muted">New Thumbnail Preview</h6>
+    <h6 class="text-muted">{{ "PRODUCT_FORM.NEW_THUMBNAIL" | translate }}</h6>
     <div class="position-relative" style="width: 100px">
       <img
         [src]="thumbnailPreviewUrl"
@@ -120,7 +129,7 @@
 
   <!-- Product Images Upload -->
   <div class="mb-3 mt-3">
-    <label>Upload Product Images</label>
+    <label>{{ "PRODUCT_FORM.UPLOAD_IMAGES" | translate }}</label>
     <input
       type="file"
       (change)="onImageSelected($event)"
@@ -131,7 +140,7 @@
 
   <!-- Existing images -->
   <div *ngIf="productImages.length" class="mt-2">
-    <label>Current Product Images:</label>
+    <label>{{ "PRODUCT_FORM.CURRENT_IMAGES" | translate }}</label>
     <div class="d-flex flex-wrap gap-2">
       <div
         class="position-relative"
@@ -154,7 +163,9 @@
 
   <!-- New Image Previews -->
   <div *ngIf="imagePreviewUrls.length" class="mt-2">
-    <h6 class="text-muted">New Image Previews</h6>
+    <h6 class="text-muted">
+      {{ "PRODUCT_FORM.NEW_IMAGE_PREVIEWS" | translate }}
+    </h6>
     <div class="d-flex flex-wrap gap-2">
       <div
         class="position-relative"
@@ -182,10 +193,10 @@
     <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
     {{
       loading
-        ? "Processing..."
+        ? ("PRODUCT_FORM.PROCESSING" | translate)
         : productId
-        ? "Update Product"
-        : "Create Product"
+        ? ("PRODUCT_FORM.UPDATE" | translate)
+        : ("PRODUCT_FORM.CREATE" | translate)
     }}
   </button>
 
@@ -195,6 +206,6 @@
     class="btn btn-outline-secondary mt-3 ms-2"
     (click)="onCancel()"
   >
-    Cancel
+    {{ "PRODUCT_FORM.CANCEL" | translate }}
   </a>
 </form>

@@ -1,22 +1,24 @@
 <div class="modal-header">
-  <h5 class="modal-title text-danger">
+  <h5 class="modal-title text-danger d-flex align-items-center">
     <i class="bi bi-exclamation-triangle me-2"></i>{{ title }}
   </h5>
   <button
     type="button"
-    class="btn-close"
+    class="btn-close confirmation-button-close"
     aria-label="Close"
     (click)="activeModal.dismiss()"
   ></button>
 </div>
+
 <div class="modal-body">
   <p>{{ message }}</p>
 </div>
+
 <div class="modal-footer">
   <button class="btn btn-secondary" (click)="activeModal.dismiss()">
-    Cancel
+    {{ "CONFIRMATION.CANCEL" | translate }}
   </button>
   <button class="btn btn-danger" (click)="activeModal.close(true)">
-    Confirm
+    {{ "CONFIRMATION.CONFIRM" | translate }}
   </button>
 </div>

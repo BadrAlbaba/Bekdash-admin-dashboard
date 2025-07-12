@@ -3,6 +3,12 @@
   padding: 10px 10px;
 }
 
+.description-text {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
 img.img-thumbnail {
   object-fit: cover;
 }

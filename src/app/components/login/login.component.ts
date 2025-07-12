@@ -8,10 +8,11 @@ import {
 import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
@@ -22,7 +23,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -43,11 +45,13 @@ export class LoginComponent implements OnInit {
       next: () => {
         this.auth.getMe().subscribe({
           next: () => this.router.navigate(['/dashboard']),
-          error: () => (this.error = 'Failed to fetch user info'),
+          error: () => this.translate.instant('LOGIN.ERROR_FETCH_USER'),
         });
       },
       error: (err) => {
-        this.error = err.error?.errors?.[0]?.message || 'Login failed';
+        this.error =
+          err.error?.errors?.[0]?.message ||
+          this.translate.instant('LOGIN.ERROR_GENERIC');
       },
     });
   }

@@ -3,10 +3,11 @@ import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import { UserStateService } from '../../../services/auth/user-state.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -15,38 +16,38 @@ export class HeaderComponent {
 
   menuItems = [
     {
-      label: 'Products',
+      label: 'MENU.PRODUCTS',
       sublinks: [
-        { label: 'Add Product', routerLink: '/dashboard/products/new' },
-        { label: 'Show Products', routerLink: '/dashboard/products' },
+        { label: 'MENU.ADD_PRODUCT', routerLink: '/dashboard/products/new' },
+        { label: 'MENU.SHOW_PRODUCTS', routerLink: '/dashboard/products' },
       ],
     },
     {
-      label: 'Orders',
+      label: 'MENU.ORDERS',
       sublinks: [
         {
-          label: 'New Orders',
+          label: 'MENU.NEW_ORDERS',
           routerLink: '/dashboard/orders',
           queryParams: { status: 'PLACED', viewMode: 'ITEM' },
         },
         {
-          label: 'All Orders',
+          label: 'MENU.ALL_ORDERS',
           routerLink: '/dashboard/orders',
         },
       ],
     },
     {
-      label: 'Categories',
+      label: 'MENU.CATEGORIES',
       sublinks: [
-        { label: 'Add Category', routerLink: '/dashboard/categories/new' },
-        { label: 'Show Categories', routerLink: '/dashboard/categories' },
+        { label: 'MENU.ADD_CATEGORY', routerLink: '/dashboard/categories/new' },
+        { label: 'MENU.SHOW_CATEGORIES', routerLink: '/dashboard/categories' },
       ],
     },
     {
-      label: 'Users',
+      label: 'MENU.USERS',
       sublinks: [
-        { label: 'Add User', routerLink: '/dashboard/users/new' },
-        { label: 'Show Users', routerLink: '/dashboard/users' },
+        { label: 'MENU.ADD_USER', routerLink: '/dashboard/users/new' },
+        { label: 'MENU.SHOW_USERS', routerLink: '/dashboard/users' },
       ],
     },
   ];

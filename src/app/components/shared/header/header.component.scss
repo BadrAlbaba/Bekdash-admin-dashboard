@@ -8,7 +8,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     font-size: 1.5rem;
     font-weight: bold;
   }
@@ -32,11 +31,13 @@
   .dropdown {
     position: relative;
     margin: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     .dropbtn {
       background-color: var(--color-primary);
       border: none;
-      border-radius: 0%;
       color: var(--color-text-light);
       font-size: 1rem;
       cursor: pointer;
@@ -50,17 +51,28 @@
     .dropdown-content {
       display: none;
       position: absolute;
-      background-color: var(--color-accent);
-      min-width: 160px;
+      background-color: #444;
+      min-width: 200px;
       z-index: 500;
       top: 100%;
-      left: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 8px;
+      padding: 0.25rem 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+      text-align: right;
 
       a {
         color: white;
-        padding: 0.5rem 1rem;
+        padding: 0.75rem 1rem;
         display: block;
+        font-size: 0.95rem;
         text-decoration: none;
+        transition: background-color 0.2s ease;
+        white-space: nowrap;
 
         &:hover {
           background-color: #3d566e;
@@ -70,6 +82,9 @@
 
     &:hover .dropdown-content {
       display: block;
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
     }
   }
 
@@ -81,9 +96,10 @@
 .logout-btn {
   background-color: #e74c3c;
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.5rem;
   cursor: pointer;
   border-radius: 3%;
+  font-size: 12px;
 
   &:hover {
     background-color: #c0392b;
@@ -94,45 +110,118 @@
   display: inline-block;
 }
 
-// Responsive
+// Responsive styles
 @media (max-width: 768px) {
+  /* -------------------------------- HEADER -------------------------------- */
   .navbar {
     .navbar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-inline: 1rem;
+
+      /* burger first, logo second */
       .hamburger {
         display: block;
-        position: fixed;
-        top: 7px;
-        right: 20px;
+        position: static;
+        order: 1;
+        font-size: 1.75rem;
+      }
+      .navbar-logo {
+        order: 2;
       }
     }
 
+    /* -------------------------------- MENU --------------------------------- */
     .navbar-menu {
       display: none;
       flex-direction: column;
       width: 100%;
       margin-top: 1rem;
+      overflow-x: hidden;
 
       &.open {
         display: flex;
-      }
+      } /* ← you already toggle this with TS */
 
+      /* --------------------------- DROPDOWN ITEM --------------------------- */
       .dropdown {
         width: 100%;
 
         .dropbtn {
           width: 100%;
-          text-align: left;
+          text-align: start;
         }
 
         .dropdown-content {
-          position: static;
+          position: relative;
           width: 100%;
+          max-width: 100vw; // prevents overflow beyond screen
+          box-sizing: border-box; // makes padding included in width
+          background-color: #444;
+          border-radius: 0 0 8px 8px;
+          padding: 0.25rem 0;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+          transition: opacity 0.2s ease;
+          direction: rtl; // explicitly enforce RTL direction
+        }
+
+        .dropdown-content a {
+          color: white;
+          padding: 0.75rem 1rem;
+          display: block;
+          font-size: 0.95rem;
+          text-decoration: none;
+          text-align: right;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+
+          &:hover {
+            background-color: #3d566e;
+          }
+        }
+
+        &:focus-within .dropdown-content {
+          display: block;
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
+        }
+
+        @media (hover: hover) {
+          &:hover .dropdown-content {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+          }
+        }
+
+        /* link styles */
+        .dropdown-content a {
+          color: #fff;
+          padding: 0.75rem 1rem;
+          display: block;
+          font-size: 0.95rem;
+          text-decoration: none;
+          text-align: start;
+          transition: background-color 0.2s ease;
+
+          &:hover {
+            background-color: #3d566e;
+          }
         }
       }
 
+      /* ------------------------- LOGOUT (mobile) --------------------------- */
       .logout-mobile {
         display: block;
         margin-top: 1rem;
+        text-align: start;
       }
     }
 

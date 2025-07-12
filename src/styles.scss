@@ -1,6 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap");
 
 // ===================
 // Global Color Variables
@@ -30,7 +28,10 @@
 // Global Styles
 // ===================
 * {
-  font-family: "Inter", sans-serif;
+  font-family: "Cairo", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "slnt" 0;
   box-sizing: border-box;
 }
 
@@ -113,4 +114,19 @@ button {
 :host {
   display: block;
   color: var(--color-text);
+}
+
+html[dir="rtl"] {
+  body {
+    direction: rtl;
+    text-align: right;
+  }
+
+  .page-title {
+    text-align: right;
+  }
+
+  .badge {
+    margin-left: 0.25rem;
+  }
 }

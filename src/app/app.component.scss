@@ -132,3 +132,35 @@ button.btn-primary {
 .button-margin-top {
   margin-top: 5px;
 }
+
+html[dir="rtl"] {
+  body {
+    direction: rtl;
+    text-align: right;
+  }
+
+  .page-title {
+    text-align: right;
+  }
+
+  .badge {
+    margin-left: 0.25rem;
+    margin-right: 0; // override if needed
+  }
+
+  th,
+  td {
+    text-align: right;
+  }
+
+  .dropdown-menu {
+    left: auto;
+    right: 0;
+  }
+
+  // Optional: align inputs/selects
+  input,
+  select {
+    text-align: right;
+  }
+}

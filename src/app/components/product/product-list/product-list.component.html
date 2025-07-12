@@ -1,4 +1,6 @@
-<h4 class="mb-4 mt-2 text-center page-title">Products List</h4>
+<h4 class="mb-4 mt-2 text-center page-title">
+  {{ "PRODUCTS.TITLE" | translate }}
+</h4>
 
 <div class="bg-light p-3 rounded shadow-sm mb-3">
   <div class="d-flex flex-wrap align-items-center gap-2">
@@ -9,8 +11,8 @@
         [(ngModel)]="listMode"
         (change)="loadProducts()"
       >
-        <option value="ALL">All Products</option>
-        <option value="MY">My Products</option>
+        <option value="ALL">{{ "PRODUCTS.ALL_PRODUCTS" | translate }}</option>
+        <option value="MY">{{ "PRODUCTS.MY_PRODUCTS" | translate }}</option>
       </select>
     </div>
 
@@ -21,22 +23,24 @@
       [(ngModel)]="filters.active"
       (change)="loadProducts()"
     >
-      <option [ngValue]="undefined">All Statuses</option>
-      <option [ngValue]="true">Active</option>
-      <option [ngValue]="false">Inactive</option>
+      <option [ngValue]="undefined">
+        {{ "PRODUCTS.ALL_STATUSES" | translate }}
+      </option>
+      <option [ngValue]="true">{{ "PRODUCTS.ACTIVE" | translate }}</option>
+      <option [ngValue]="false">{{ "PRODUCTS.INACTIVE" | translate }}</option>
     </select>
 
     <input
       type="text"
       class="form-control form-control-sm w-auto"
-      placeholder="🔍 Search title"
+      placeholder="🔍 {{ 'PRODUCTS.SEARCH_TITLE' | translate }}"
       (input)="onSearchChange($event)"
     />
 
     <input
       type="number"
       class="form-control form-control-sm w-auto"
-      placeholder="Min Price"
+      placeholder="{{ 'PRODUCTS.MIN_PRICE' | translate }}"
       [(ngModel)]="filters.minPrice"
       (change)="loadProducts()"
     />
@@ -44,7 +48,7 @@
     <input
       type="number"
       class="form-control form-control-sm w-auto"
-      placeholder="Max Price"
+      placeholder="{{ 'PRODUCTS.MAX_PRICE' | translate }}"
       [(ngModel)]="filters.maxPrice"
       (change)="loadProducts()"
     />
@@ -54,9 +58,13 @@
       [(ngModel)]="sortMode"
       (change)="loadProducts()"
     >
-      <option value="AVERAGE_RATING">Average Rating</option>
-      <option value="PRICE">Price</option>
-      <option value="CREATED_AT">Created At</option>
+      <option value="AVERAGE_RATING">
+        {{ "PRODUCTS.SORT.RATING" | translate }}
+      </option>
+      <option value="PRICE">{{ "PRODUCTS.SORT.PRICE" | translate }}</option>
+      <option value="CREATED_AT">
+        {{ "PRODUCTS.SORT.CREATED_AT" | translate }}
+      </option>
     </select>
 
     <select
@@ -64,8 +72,8 @@
       [(ngModel)]="sortOrder"
       (change)="loadProducts()"
     >
-      <option value="DESC">Desc</option>
-      <option value="ASC">Asc</option>
+      <option value="DESC">{{ "PRODUCTS.SORT.DESC" | translate }}</option>
+      <option value="ASC">{{ "PRODUCTS.SORT.ASC" | translate }}</option>
     </select>
 
     <ng-select
@@ -74,7 +82,7 @@
       bindValue="id"
       [multiple]="true"
       [(ngModel)]="filters.categoryIds"
-      placeholder="Select categories"
+      placeholder="{{ 'PRODUCTS.SELECT_CATEGORIES' | translate }}"
       class="form-control form-control-sm w-auto"
       (change)="loadProducts()"
     ></ng-select>
@@ -86,7 +94,7 @@
       bindValue="id"
       [multiple]="true"
       [(ngModel)]="filters.sellerIds"
-      placeholder="Select sellers"
+      placeholder="{{ 'PRODUCTS.SELECT_SELLERS' | translate }}"
       class="form-control form-control-sm w-auto"
       (change)="loadProducts()"
     ></ng-select>
@@ -104,17 +112,19 @@
     [disabled]="page === 1"
     (click)="previousPage()"
   >
-    &laquo; Previous
+    &laquo; {{ "PRODUCTS.PREVIOUS" | translate }}
   </button>
 
-  <span class="small text-muted">Showing {{ showingRange }}</span>
+  <span class="small text-muted"
+    >{{ "PRODUCTS.SHOWING" | translate }} {{ showingRange }}</span
+  >
 
   <button
     class="btn btn-outline-primary btn-sm"
     [disabled]="page === totalPages"
     (click)="nextPage()"
   >
-    Next &raquo;
+    {{ "PRODUCTS.NEXT" | translate }} &raquo;
   </button>
 </div>
 
@@ -124,22 +134,25 @@
   <thead class="table-light">
     <tr>
       <th (click)="setSort('TITLE')" style="cursor: pointer; width: 300px">
-        Title <span [innerHTML]="getSortIcon('TITLE')"></span>
+        {{ "PRODUCTS.TITLE" | translate }}
+        <span [innerHTML]="getSortIcon('TITLE')"></span>
       </th>
       <th (click)="setSort('PRICE')" style="cursor: pointer">
-        Price <span [innerHTML]="getSortIcon('PRICE')"></span>
+        {{ "PRODUCTS.PRICE" | translate }}
+        <span [innerHTML]="getSortIcon('PRICE')"></span>
       </th>
-      <th>Stock</th>
+      <th>{{ "PRODUCTS.STOCK" | translate }}</th>
       <th (click)="setSort('AVERAGE_RATING')" style="cursor: pointer">
-        Rating <span [innerHTML]="getSortIcon('AVERAGE_RATING')"></span>
+        {{ "PRODUCTS.RATING" | translate }}
+        <span [innerHTML]="getSortIcon('AVERAGE_RATING')"></span>
       </th>
-      <th *ngIf="isAdmin">Seller</th>
-      <th>Active</th>
-      <th>Reviews</th>
-      <th>Orders</th>
-      <th>Categories</th>
-      <th>Thumbnail</th>
-      <th class="actions-th">Actions</th>
+      <th *ngIf="isAdmin">{{ "PRODUCTS.SELLER" | translate }}</th>
+      <th>{{ "PRODUCTS.ACTIVE" | translate }}</th>
+      <th>{{ "PRODUCTS.REVIEWS" | translate }}</th>
+      <th>{{ "PRODUCTS.ORDERS" | translate }}</th>
+      <th>{{ "PRODUCTS.CATEGORIES" | translate }}</th>
+      <th>{{ "PRODUCTS.THUMBNAIL" | translate }}</th>
+      <th class="actions-th">{{ "PRODUCTS.ACTIONS" | translate }}</th>
     </tr>
   </thead>
   <tbody>
@@ -154,7 +167,11 @@
           class="badge"
           [ngClass]="product.active ? 'bg-success' : 'bg-danger'"
         >
-          {{ product.active ? "Active" : "Inactive" }}
+          {{
+            product.active
+              ? ("PRODUCTS.ACTIVE" | translate)
+              : ("PRODUCTS.INACTIVE" | translate)
+          }}
         </span>
       </td>
       <td>{{ product.reviews?.length || 0 }}</td>
@@ -182,17 +199,17 @@
       <td>
         <!-- View button -->
         <button
-          class="btn btn-sm btn-primary me-1"
+          class="btn btn-sm btn-primary me-1 view-product-button"
           (click)="viewProduct(product.id)"
         >
-          View
+          {{ "PRODUCTS.VIEW" | translate }}
         </button>
 
         <!-- Dropdown for other actions -->
         <div class="btn-group">
           <button
             type="button"
-            class="btn btn-sm btn-outline-secondary dropdown-toggle"
+            class="btn btn-sm btn-outline-secondary dropdown-toggle dropdown-actions-button"
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
@@ -201,7 +218,8 @@
           <ul class="dropdown-menu">
             <li>
               <a class="dropdown-item" (click)="editProduct(product.id)">
-                <i class="bi bi-pencil-square me-1"></i> Edit
+                <i class="bi bi-pencil-square me-1"></i>
+                {{ "PRODUCTS.EDIT" | translate }}
               </a>
             </li>
             <li>
@@ -218,7 +236,11 @@
                       : 'bi-check-circle text-success'
                   "
                 ></i>
-                {{ product.active ? "Deactivate" : "Activate" }}
+                {{
+                  product.active
+                    ? ("PRODUCTS.DEACTIVATE" | translate)
+                    : ("PRODUCTS.ACTIVATE" | translate)
+                }}
               </a>
             </li>
             <li>
@@ -226,7 +248,8 @@
                 class="dropdown-item text-danger"
                 (click)="deleteProduct(product)"
               >
-                <i class="bi bi-trash me-1"></i> Delete
+                <i class="bi bi-trash me-1"></i>
+                {{ "PRODUCTS.DELETE" | translate }}
               </a>
             </li>
           </ul>
@@ -242,8 +265,9 @@
   *ngIf="!loading && products.length === 0"
   class="alert alert-info mt-3 mb-3 p-3"
 >
-  No products found.
+  {{ "PRODUCTS.NO_RESULTS" | translate }}
 </div>
+
 <div
   class="d-flex justify-content-center align-items-center gap-2 mt-3 mb-3 p-3"
   *ngIf="!loading && totalCount > 0"
@@ -253,16 +277,18 @@
     [disabled]="page === 1"
     (click)="previousPage()"
   >
-    &laquo; Previous
+    &laquo; {{ "PRODUCTS.PREVIOUS" | translate }}
   </button>
 
-  <span class="small text-muted">Showing {{ showingRange }}</span>
+  <span class="small text-muted"
+    >{{ "PRODUCTS.SHOWING" | translate }} {{ showingRange }}</span
+  >
 
   <button
     class="btn btn-outline-primary btn-sm"
     [disabled]="page === totalPages"
     (click)="nextPage()"
   >
-    Next &raquo;
+    {{ "PRODUCTS.NEXT" | translate }} &raquo;
   </button>
 </div>

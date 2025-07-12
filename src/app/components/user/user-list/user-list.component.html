@@ -1,18 +1,26 @@
-<h4 class="mb-4 mt-2 text-center title">Users List</h4>
+<h4 class="mb-4 mt-2 text-center title">
+  {{ "USERS_LIST.TITLE" | translate }}
+</h4>
 
 <div class="bg-light p-2 rounded shadow-sm mb-3">
   <div class="d-flex flex-wrap align-items-center gap-2">
     <div class="d-flex align-items-center w-auto">
-      <span class="me-2 w-100 d-block">Filter by Role:</span>
+      <span class="me-2 w-100 d-block">{{
+        "USERS_LIST.FILTER_ROLE" | translate
+      }}</span>
       <select
         [(ngModel)]="roleFilter"
         (change)="onFilterChange(roleFilter)"
         class="form-select form-select-sm"
       >
-        <option value="">All</option>
-        <option value="ADMIN">Admin</option>
-        <option value="SELLER">Seller</option>
-        <option value="CUSTOMER">Customer</option>
+        <option value="">{{ "USERS_LIST.ALL" | translate }}</option>
+        <option value="ADMIN">{{ "USERS_LIST.ROLE.ADMIN" | translate }}</option>
+        <option value="SELLER">
+          {{ "USERS_LIST.ROLE.SELLER" | translate }}
+        </option>
+        <option value="CUSTOMER">
+          {{ "USERS_LIST.ROLE.CUSTOMER" | translate }}
+        </option>
       </select>
     </div>
 
@@ -20,7 +28,7 @@
     <input
       type="text"
       class="form-control form-control-sm w-auto"
-      placeholder="🔍 Search name or email..."
+      [placeholder]="'USERS_LIST.SEARCH_PLACEHOLDER' | translate"
       [(ngModel)]="searchTerm"
       (input)="onSearchChange()"
     />
@@ -30,31 +38,35 @@
 <table class="table table-hover align-middle rounded overflow-hidden border">
   <thead class="table-light">
     <tr>
-      <th (click)="onSort('name')" style="cursor: pointer">Name</th>
-      <th (click)="onSort('email')" style="cursor: pointer">Email</th>
-      <th>Phone</th>
-      <th>Role</th>
-      <th (click)="onSort('createdAt')" style="cursor: pointer">Created</th>
-      <th>Actions</th>
+      <th (click)="onSort('name')" style="cursor: pointer">
+        {{ "USERS_LIST.NAME" | translate }}
+      </th>
+      <th (click)="onSort('email')" style="cursor: pointer">
+        {{ "USERS_LIST.EMAIL" | translate }}
+      </th>
+      <th>{{ "USERS_LIST.PHONE" | translate }}</th>
+      <th>{{ "USERS_LIST.ROLE.TITLE" | translate }}</th>
+      <th (click)="onSort('createdAt')" style="cursor: pointer">
+        {{ "USERS_LIST.CREATED" | translate }}
+      </th>
+      <th>{{ "USERS_LIST.ACTIONS" | translate }}</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let user of filteredUsers">
-      <td>
-        {{ user.name }}
-      </td>
-      <td>
-        {{ user.email }}
-      </td>
+      <td>{{ user.name }}</td>
+      <td>{{ user.email }}</td>
       <td>{{ user.phone }}</td>
-      <td>{{ user.role }}</td>
+      <td>{{ "USERS_LIST.ROLE." + user.role | translate }}</td>
       <td>{{ user.createdAt | date : "short" }}</td>
       <td>
-        <button class="btn btn-sm btn-primary me-1" (click)="viewUser(user.id)">
-          View
+        <button
+          class="btn btn-sm btn-primary me-1 view-user-button"
+          (click)="viewUser(user.id)"
+        >
+          {{ "COMMON.VIEW" | translate }}
         </button>
 
-        <!-- Dropdown for other actions -->
         <div class="btn-group">
           <button
             type="button"
@@ -67,12 +79,14 @@
           <ul class="dropdown-menu">
             <li>
               <a class="dropdown-item" (click)="editUser(user.id)">
-                <i class="bi bi-pencil-square me-1"></i> Edit
+                <i class="bi bi-pencil-square me-1"></i>
+                {{ "COMMON.EDIT" | translate }}
               </a>
             </li>
             <li *ngIf="user.id !== this.currentUserId">
               <a class="dropdown-item text-danger" (click)="onDelete(user)">
-                <i class="bi bi-trash me-1"></i> Delete
+                <i class="bi bi-trash me-1"></i>
+                {{ "COMMON.DELETE" | translate }}
               </a>
             </li>
           </ul>

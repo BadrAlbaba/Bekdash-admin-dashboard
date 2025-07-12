@@ -68,6 +68,11 @@
   min-width: 30px; /* makes buttons look neat */
 }
 
+::ng-deep .ql-editor::before {
+  text-align: right;
+  direction: rtl;
+}
+
 ::ng-deep .ng-option-disabled {
   color: #999 !important; /* Gray out the text */
   background-color: #f8f9fa !important; /* Light background */
